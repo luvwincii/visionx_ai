@@ -1,6 +1,7 @@
 import { analyzeField, drawZoneGrid } from '../assets/js/fieldmap.js';
 import { loadModel, classify } from './classifier.js';
 import { loadFieldModel, analyzeFieldAI } from './fieldai.js';
+import { mountAssistant } from './assistant.js';
 import { describe, TYPES, GENERAL_NOTE, fieldAdvice } from './knowledge.js';
 import { saveAnalysis, listAnalyses, deleteAnalysis, getAnalysis, newId } from './store.js';
 
@@ -227,6 +228,7 @@ async function renderField(rec) {
         <div class="report__sec">
           <p class="note">Xəritə adi RGB şəkildən hesablanır: bitki örtüyü ExG, sağlamlıq isə VARI indeksi ilə ölçülür. Rənglər eyni şəkil daxilində müqayisə üçündür. Kölgə, səhər-axşam işığı və payız rəngləri nəticəyə təsir edə bilər. Qırmızı zonanı yerində yoxlayın və yarpaq şəklini telefon rejimində təhlil edin.</p>
         </div>
+        <div class="report__sec chat" data-chat></div>
       </div>
     </div>`;
 
@@ -294,6 +296,16 @@ async function renderField(rec) {
     a.href = canvas.toDataURL('image/png'); a.click();
   });
   $('[data-new]', r).addEventListener('click', resetStage);
+
+  const fieldCtx = () => [
+    'Dron/sahə rejimi (RGB şəkildən ExG + VARI indeksi ilə sağlamlıq xəritəsi).',
+    `Bitki örtüyü içində: sağlam ${s.ok}%, risk ${s.risk}%, problem ${s.bad}%.`,
+    `Şəklin bitki örtüyü ${s.vegCover}%, bitkisiz torpaq ${s.soil}%, analiz edilməyən (su, kölgə, yol) ${s.void}%. Orta VARI ${s.index.toFixed(2)}.`,
+    rec.hot.length ? `Ən problemli zonalar (6×6 şəbəkə, A–F sütun, 1–6 sətir): ${rec.hot.map((z) => `${z.id} (problem ${z.bad}%, risk ${z.risk}%)`).join('; ')}.` : 'Xüsusi problemli zona tapılmadı.',
+    `Tətbiqin tövsiyələri: ${advice.map((a) => a.t + ': ' + a.d).join(' ')}`,
+    rec.ai ? `AI səbəb modeli (beta, Agriculture-Vision datası ilə öyrədilib): ${rec.ai.shares.filter((x) => x.pct >= 0.5).map((x) => `${x.name} ${x.pct}%`).join(', ') || 'aydın səbəb tapılmadı'}; anomaliya sahəsi ${rec.ai.anomalyPct}%.` : '',
+  ].join('\n');
+  mountAssistant($('[data-chat]', r), fieldCtx, ['Bu xəritə nə deməkdir?', 'Hansı zonaya birinci gedim?', 'Sarı zonalar niyə ola bilər?']);
 }
 
 // ---------- leaf result ----------
@@ -337,9 +349,19 @@ async function renderLeaf(rec) {
           <p class="label">Digər ehtimallar</p>
           <ul class="alts">${alts.map((a) => { const x = describe(a.cls); return `<li><span>${esc(x.crop ? x.crop + ' · ' : '')}${esc(x.name)}</span><b>${pctFmt(a.p)}</b></li>`; }).join('')}</ul>
         </div>` : ''}
+        <div class="report__sec chat" data-chat></div>
         <div class="report__sec"><p class="note">${esc(GENERAL_NOTE)}</p></div>
       </div>
     </div>`;
+  const ctx = isOther
+    ? `Telefon/yarpaq rejimi. Model şəkildə tanıdığı bitkilərin yarpağını tapmadı ("yarpaq deyil" ehtimalı ${pctFmt(rec.otherP)}).`
+    : [`Telefon/yarpaq rejimi.`, `Bitki: ${d.crop}.`, `Diaqnoz: ${d.name}${d.latin ? ' (' + d.latin + ')' : ''}, növ: ${TYPES[d.type] || '-'}.`,
+      `Modelin əminliyi: ${pctFmt(top.p)}. Sağlam olma ehtimalı: ${pctFmt(rec.healthyP)}.${unsure ? ' Model əmin deyil.' : ''}`,
+      `Təsvir: ${d.about}`, `Tövsiyə olunan addımlar: ${d.actions.join(' ')}`,
+      alts.length ? `Digər ehtimallar: ${alts.map((a) => { const x = describe(a.cls); return `${x.crop || ''} ${x.name} ${pctFmt(a.p)}`; }).join('; ')}.` : ''].join('\n');
+  mountAssistant($('[data-chat]', r), ctx, isOther
+    ? ['Yarpağı necə düzgün çəkim?', 'Hansı bitkiləri tanıyırsınız?']
+    : ['Bu nə deməkdir?', 'İndi nə etməliyəm?', 'Qonşu bitkilərə keçə bilərmi?']);
   $('[data-new]', r).addEventListener('click', resetStage);
   scrollToResult();
 }
