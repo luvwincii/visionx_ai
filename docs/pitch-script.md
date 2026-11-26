@@ -1,65 +1,65 @@
 # VisionX: pitch mətni
 
-Təxminən 3 dəqiqə. Mötərizədəki yerləri öz məlumatınızla doldurun.
+Təxminən 4 dəqiqə. Mötərizədəki yerləri öz məlumatınızla doldurun.
 
 ## 1. VisionX
-Salam. Mən [ad], VisionX-dən.
-VisionX fermerə sahəsini yuxarıdan görməyə kömək edir. Dron və ya telefonla şəkil çəkilir, biz o şəkli sahənin sağlamlıq xəritəsinə çeviririk.
+Salam, mənim adım [ad], VisionX-in təsisçisiyəm.
+Təsəvvür edin ki, 50 hektar pomidor sahəniz var. Bir səhər sahənin bir küncündə yarpaqlarda qəhvəyi ləkələr görürsünüz. İlk sual budur: bu ləkələr nə vaxtdan oradadır və artıq nə qədər sahəyə yayılıb?
+VisionX məhz bu suala cavab verir. Dron və ya telefonla çəkilmiş adi şəkli sahənin sağlamlıq xəritəsinə çevirir və problemin harada olduğunu göstərir.
 
 ## 2. Problem
-Fermerin onlarla hektar sahəsi var. Hər gün hamısını gəzib yoxlaya bilmir.
-Xəstəlik, zərərverici və ya susuzluq sahənin bir hissəsində başlayır. Fermer onu yayılandan sonra görür.
-Problemin yeri bilinmədiyi üçün dərman bütün sahəyə vurulur. Bu həm məhsul itkisidir, həm artıq xərc, həm də torpağa zərər.
+Fermerin əsas problemi məlumatın gec gəlməsidir.
+Onlarla hektarlıq sahəni hər gün piyada gəzib yoxlamaq mümkün deyil. Xəstəlik, zərərverici və ya susuzluq adətən sahənin kiçik bir hissəsində başlayır və fermer onu çox vaxt artıq yayıldıqdan sonra görür.
+Problemin dəqiq yeri bilinmədiyi üçün dərman bütün sahəyə vurulur. Nəticədə fermer üç tərəfdən itirir: məhsulun bir hissəsi gedir, dərmana artıq pul xərclənir, torpaq və ətraf mühit isə lazımsız kimyəvi yük alır.
 
 ## 3. Həll
-Biz bunu sadə yolla həll edirik. Adi şəkil çəkilir, tətbiq onu rəngli xəritəyə çevirir.
-Yaşıl sağlamdır, sarı riskdir, qırmızı problemdir.
-Fermer bütün sahəni gəzmir. Yalnız qırmızı yerlərə gedir.
+Biz bu prosesi tərsinə çeviririk. Fermer problemi axtarmır, problem özü onun telefonuna gəlir.
+Dron sahənin üstündən uçur, sistemimiz şəkli analiz edir və sahəni üç rəngə bölür. Yaşıl sağlam hissələri, sarı risk altında olan hissələri, qırmızı isə dərhal baxılmalı olan yerləri göstərir.
+Fermer bütün sahəni deyil, yalnız qırmızı zonaları yoxlayır və dərmanı da yalnız orada istifadə edir.
 
 ## 4. Necə işləyir
-Üç addımdır.
-Birinci: dron sahənin üstündən uçur və ya fermer yarpağı telefonla çəkir.
-İkinci: model şəkli bir neçə saniyəyə analiz edir.
-Üçüncü: tətbiq azərbaycanca deyir ki, problem nədir və nə etmək lazımdır.
+İş prosesi üç addımdan ibarətdir.
+Birinci addımda dron sahənin üstündən uçur. Dronu olmayan fermer isə xəstə görünən yarpağı telefonla çəkə bilər.
+İkinci addımda süni intellekt modelimiz şəkli bir neçə saniyə ərzində təhlil edir.
+Üçüncü addımda tətbiq nəticəni azərbaycan dilində izah edir: problem nədir, harada yerləşir və fermer nə etməlidir.
 
 ## 5. Məhsul
-Platforma artıq işləyir.
-Dron rejimində sahənin xəritəsini, zonaları və hər zonada problemin payını görürsünüz.
-Telefon rejimində yarpağın şəklini çəkirsiniz və xəstəliyin adını, nə etmək lazım olduğunu alırsınız.
-Analiz telefonun özündə gedir. İnternet olmasa da işləyir.
+Platformanı artıq qurmuşuq və o işləyir.
+Dron rejimində fermer sahənin xəritəsini görür. Sahə zonalara bölünür və hər zonada problemin neçə faiz olduğu göstərilir.
+Telefon rejimində fermer yarpağın şəklini çəkir və xəstəliyin adını, modelin nə dərəcədə əmin olduğunu və görülməli addımları alır.
+Bir vacib məqam da var: analiz birbaşa telefonda aparılır. Şəkil serverə göndərilmir və internet olmayan sahədə də sistem işləyir. Kənd yerləri üçün bu, xüsusilə önəmlidir.
 
 ## 6. Sübut
-Modeli real şəkillərdə yoxladıq.
-Açıq modellər laboratoriya şəkillərində yaxşı işləyir, amma sahədə çəkilmiş şəkillərdə zəifləyir.
-637 real sahə şəklində ən yaxşı müstəqil açıq model 39% düzgün cavab verdi. Bizim model 74%.
-Bu şəkillər öyrətmədə istifadə olunmayıb.
-Model 15 bitki üzrə 48 diaqnoz tanıyır. Pambıq və üzüm də daxildir.
+Modelin keyfiyyətini real şəkillər üzərində yoxladıq.
+Açıq yayılan modellər laboratoriyada çəkilmiş şəkillərdə yaxşı nəticə göstərir. Lakin fermerin sahədə çəkdiyi şəkillərdə onların dəqiqliyi kəskin düşür.
+Biz sahədə çəkilmiş 637 şəkil üzərində test apardıq. Bu şəkillər modelin öyrədilməsində istifadə olunmayıb. Ən yaxşı müstəqil açıq model bu şəkillərin 39 faizində düzgün diaqnoz qoydu, bizim model isə 74 faizində.
+Hazırda model 15 bitki üzrə 48 diaqnozu tanıyır. Bunlara Azərbaycan üçün vacib olan pambıq və üzüm də daxildir.
 
 ## 7. Biznes model
-Üç gəlir mənbəyimiz var.
-Birincisi dron paketidir: fermerə və aqroparka analiz üçün hazır dron satırıq.
-İkincisi, əsas gəlirimiz, analiz abunəsidir: hektar başına, mövsümlük ödəniş.
-Üçüncüsü icarədir: dron ala bilməyən kiçik fermer xidmət üçün ödəyir. Bir dron bir neçə fermerə xidmət edir.
+Gəlir modelimiz üç istiqamətdən ibarətdir.
+Birincisi, dron paketidir. Fermerlərə və aqroparklara analiz üçün hazırlanmış dron satırıq. Bu, birdəfəlik gəlirdir.
+İkincisi və əsası analiz abunəsidir. Müştəri hektar başına, mövsümlük ödəniş edir. Bu, bizə daimi gəlir gətirir.
+Üçüncüsü icarə xidmətidir. Dron almağa imkanı olmayan kiçik fermer yalnız xidmət üçün ödəyir. Bir dronla bir neçə fermerə xidmət göstəririk və bu, həm onlar, həm də bizim üçün sərfəlidir.
 
 ## 8. Bazar
-Dövlət Statistika Komitəsinə görə 2023-cü ildə Azərbaycanda 1,5 milyon hektar əkin sahəsi olub.
-Bunun 215 min hektarı Qarabağ və Şərqi Zəngəzur iqtisadi rayonlarındadır.
-Ölkədə 1 203 kənd təsərrüfatı müəssisəsi var. Onlar abunə üçün ilk hədəf müştərilərimizdir.
-Qarabağdan başlayırıq, çünki orada yeni sahələr və aqroparklar salınır. Sonra bütün ölkəyə çıxırıq.
+Dövlət Statistika Komitəsinin məlumatına görə, 2023-cü ildə Azərbaycanda əkin sahəsi bir yarım milyon hektar olub. Bunun 215 min hektarı Qarabağ və Şərqi Zəngəzur iqtisadi rayonlarının payına düşür.
+Ölkədə 1 203 kənd təsərrüfatı müəssisəsi fəaliyyət göstərir. Abunə modelimiz üçün ilk hədəf müştərilərimiz məhz onlardır.
+İşə Qarabağdan başlayırıq, çünki orada yeni sahələr və aqroparklar salınır, kənd təsərrüfatı yenidən qurulur. Yeni texnologiyanı ilk gündən tətbiq etmək üçün ən uyğun yer oradır. Sonra bütün ölkəyə çıxacağıq.
 
 ## 9. Rəqabət
-Bu gün fermerin seçimləri bunlardır.
-Peyk şəkilləri gecikir və detalı azdır.
-Multispektral dron bahalı sensor tələb edir.
-Aqronom xəstəliyi tanıyır, amma yavaşdır və hər səfər pullu olur.
-VisionX adi dron və ya telefonla işləyir. Həm problemin yerini, həm də adını göstərir.
+Bu gün fermerin sahəsini izləmək üçün bir neçə yolu var, amma hər birinin çatışmazlığı var.
+Peyk şəkilləri gecikmə ilə gəlir və kiçik detalları göstərmir.
+Multispektral dronlar dəqiqdir, amma xüsusi və bahalı sensor tələb edir.
+Aqronom xəstəliyi tanıya bilir, lakin hər səfər vaxt və pul tələb edir.
+VisionX isə adi dron və ya telefonla işləyir və iki suala birdən cavab verir: problem haradadır və nədir.
 
 ## 10. Yol xəritəsi
-MVP hazırdır: sayt və platforma işləyir, model öyrədilib və test olunub.
-Növbəti addım Qarabağda pilot fermerlərlə işləmək və modeli yerli şəkillərlə yeniləməkdir.
-Sonra buğda modelini əlavə edirik və abunə ilə dron paketlərinin satışına başlayırıq.
+Hazırda MVP tam hazırdır: sayt və platforma işləyir, model öyrədilib və test olunub.
+Növbəti mərhələdə Qarabağda pilot fermerlərlə işləməyə başlayırıq. Onların sahələrindən toplanan yerli şəkillərlə modeli yenidən öyrədəcəyik ki, Azərbaycan şəraitində daha dəqiq işləsin.
+Bundan sonra buğda üçün ayrıca model əlavə edəcəyik, abunə və dron paketlərinin satışına başlayacağıq.
 
 ## 11. Təklif
-Bizə [məbləğ] manat investisiya və [say] pilot fermer və aqropark lazımdır.
-İlk mövsümdə [hektar] hektarı izləmək istəyirik.
-İstəsəniz, demonu indi göstərə bilərəm. Təşəkkür edirəm.
+Bu planı həyata keçirmək üçün bizə [məbləğ] manat investisiya lazımdır. Bundan əlavə, [say] pilot fermer və aqroparkla əməkdaşlıq etmək istəyirik.
+Hədəfimiz ilk mövsümdə [hektar] hektar sahəni izləməkdir.
+İstəsəniz, platformanı indi canlı göstərə bilərəm: telefonla bir yarpaq çəkək və nəticəni birlikdə görək.
+Diqqətinizə görə təşəkkür edirəm.
