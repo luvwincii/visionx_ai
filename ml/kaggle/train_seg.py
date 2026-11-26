@@ -106,11 +106,18 @@ class Net(nn.Module):
         self.drop = nn.Dropout2d(0.1)
         self.cls = nn.Conv2d(D, len(CLASSES), 1)
     def forward(self, x):
-        feats = list(self.enc(pixel_values=x, output_hidden_states=True).hidden_states)[-4:]   # 4 stages
-        for i, f in enumerate(feats):          # some versions return the last stage as (B, N, C)
+        hs = list(self.enc(pixel_values=x, output_hidden_states=True).hidden_states)
+        if not getattr(self, '_shown', False):
+            self._shown = True; print('hidden_states shapes:', [tuple(h.shape) for h in hs], flush=True)
+        for i, f in enumerate(hs):             # some versions return tokens as (B, N, C)
             if f.dim() == 3:
-                B, N, Cc = f.shape; h = int(round(N ** 0.5)); feats[i] = f.transpose(1, 2).reshape(B, Cc, h, N // h)
-        feats.sort(key=lambda f: -f.shape[-1])  # highest resolution first
+                B, N, Cc = f.shape; h = int(round(N ** 0.5)); hs[i] = f.transpose(1, 2).reshape(B, Cc, h, N // h)
+        # pick each stage by its channel count (the last tensor with that width = stage output),
+        # independent of how a transformers version orders or extends hidden_states
+        feats = []
+        for p in self.proj:
+            cands = [f for f in hs if f.dim() == 4 and f.shape[1] == p.in_channels]
+            feats.append(cands[-1])
         size = feats[0].shape[-2:]
         ups = [F.interpolate(p(f), size=size, mode='bilinear', align_corners=False) for p, f in zip(self.proj, feats)]
         return self.cls(self.drop(self.fuse(torch.cat(ups[::-1], 1))))   # (B, C, S/4, S/4)
