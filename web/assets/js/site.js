@@ -47,7 +47,7 @@ async function initCompare(el) {
   const canvas = $('canvas', el);
   try {
     const img = await loadImage(el.dataset.src);
-    const res = analyzeField(img, { maxSide: 1200, blocksAcross: 170 });
+    const res = analyzeField(img, { maxSide: 1440 });
     paint(canvas, res.map);
   } catch (e) { console.error(e); }
   el.classList.remove('is-loading');
@@ -81,7 +81,7 @@ $$('[data-livemap]').forEach((el) => {
     io.disconnect();
     try {
       const img = await loadImage(el.dataset.src);
-      const res = analyzeField(img, { maxSide: 1000, blocksAcross: 110 });
+      const res = analyzeField(img, { maxSide: 1280 });
       paint($('canvas', el), res.map);
     } catch (e) { console.error(e); }
   }, { rootMargin: '300px' });

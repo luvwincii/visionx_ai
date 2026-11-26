@@ -1,5 +1,5 @@
 // VisionX offline cache: app shell + model are cached after the first visit.
-const CACHE = 'visionx-v1';
+const CACHE = 'visionx-v2';
 const SHELL = [
   './', './index.html', './app.js', './classifier.js', './knowledge.js', './store.js', './manifest.webmanifest',
   '../assets/css/base.css', '../assets/css/app.css', '../assets/js/fieldmap.js', '../assets/img/favicon.svg',

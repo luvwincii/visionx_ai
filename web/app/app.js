@@ -130,11 +130,11 @@ async function run(img, source) {
     if (state.mode === 'field') {
       showLoading('Sağlamlıq xəritəsi hesablanır…');
       await new Promise((r) => setTimeout(r, 30));
-      const res = analyzeField(img, { maxSide: 1400, blocksAcross: 140 });
+      const res = analyzeField(img, { maxSide: 1400 });
       const photo = canvasFrom(img, 1400);
       const rec = {
         id: newId(), date: Date.now(), mode: 'field', name: name || 'Adsız sahə', source,
-        photo: photo.toDataURL('image/jpeg', 0.82), map: res.map.toDataURL('image/png'),
+        photo: photo.toDataURL('image/jpeg', 0.82), map: res.map.toDataURL('image/jpeg', 0.9),
         stats: res.stats, hot: res.hot, zones: res.zones, grid: res.grid,
       };
       await renderField(rec);
@@ -172,7 +172,7 @@ async function renderField(rec) {
   const [photo, map] = await Promise.all([loadImage(rec.photo), loadImage(rec.map)]);
   const s = rec.stats;
   const advice = fieldAdvice(s, rec.hot);
-  const ranked = [...rec.zones].filter((z) => z.veg >= 4).sort((a, b) => b.score - a.score).slice(0, 6);
+  const ranked = [...rec.zones].filter((z) => z.veg >= 10).sort((a, b) => b.score - a.score).slice(0, 6);
   const r = $('[data-result]');
   r.hidden = false; $('[data-empty]').hidden = true;
   r.innerHTML = `
@@ -228,7 +228,7 @@ async function renderField(rec) {
     ctx.imageSmoothingEnabled = true;
     if (layer !== 'map') ctx.drawImage(photo, 0, 0, canvas.width, canvas.height);
     if (layer !== 'photo') {
-      ctx.imageSmoothingEnabled = false;
+      ctx.imageSmoothingEnabled = true;
       ctx.globalAlpha = layer === 'overlay' ? 0.62 : 1;
       ctx.drawImage(map, 0, 0, canvas.width, canvas.height);
       ctx.globalAlpha = 1;

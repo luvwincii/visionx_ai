@@ -36,7 +36,7 @@
 .compare{position:relative;margin:0;border-radius:var(--radius);overflow:hidden;border:1px solid var(--line-2);background:var(--surface);aspect-ratio:1440/954;touch-action:pan-y;user-select:none;-webkit-user-select:none}
 .compare__photo,.compare__map canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .compare__map{position:absolute;inset:0;clip-path:inset(0 0 0 var(--pos,50%))}
-.compare__map canvas{image-rendering:pixelated}
+.compare__map canvas{image-rendering:auto}
 .compare__label{position:absolute;top:12px;z-index:3;padding:5px 9px;border-radius:4px;background:rgba(12,15,14,.86);font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--text);pointer-events:none}
 .compare__label--l{left:12px}.compare__label--r{right:12px}
 .compare__handle{position:absolute;top:0;bottom:0;left:var(--pos,50%);width:2px;margin-left:-1px;background:var(--text);z-index:2;pointer-events:none}
@@ -90,7 +90,7 @@
 .step__media{margin:0;position:relative;border-radius:var(--radius);overflow:hidden;border:1px solid var(--line-2);background:var(--surface)}
 .step__media img{width:100%;height:auto}
 .step__media--map{aspect-ratio:1280/1000}
-.step__media--map canvas{width:100%;height:100%;object-fit:cover;image-rendering:pixelated}
+.step__media--map canvas{width:100%;height:100%;object-fit:cover;image-rendering:auto}
 .step__media--shot{background:var(--surface-2)}
 
 /* MODES */

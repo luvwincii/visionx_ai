@@ -182,6 +182,13 @@ export const GENERAL_NOTE = 'Bu, ilkin AI qiymətləndirməsidir. Kimyəvi prepa
 // Field (drone) advice by share of the map
 export function fieldAdvice(stats, hot) {
   const out = [];
+  // Guard: the method needs a top-down view of a field
+  if (stats.vegCover < 5) {
+    return [{ s: 1, t: 'Şəkildə bitki örtüyü demək olar ki, yoxdur', d: 'Bu şəkildən sahənin vəziyyətini qiymətləndirmək olmur. Şəkli sahənin üstündən, yuxarıdan çəkin. Sahə yeni əkilibsə, xəritə cücərtilər böyüdükcə məlumatlı olacaq. Tək yarpağı yoxlamaq üçün "Telefon / yarpaq" rejimini seçin.' }];
+  }
+  if (stats.void >= 35) {
+    out.push({ s: 1, t: 'Şəkil yuxarıdan çəkilməyib', d: `Şəklin ${stats.void}%-i səma, su, kölgə və ya yoldur. Yandan çəkilmiş şəkildə rənglər etibarlı deyil. Ən dəqiq nəticə üçün dronla, sahənin düz üstündən çəkin.` });
+  }
   if (stats.vegCover < 15) {
     out.push({ s: 1, t: 'Şəkildə bitki örtüyü azdır', d: 'Şəkil sahənin üstündən, yuxarıdan çəkilməlidir. Sahə yeni əkilibsə, xəritə cücərtilər böyüdükcə daha informativ olacaq.' });
   }
