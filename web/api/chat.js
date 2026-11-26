@@ -2,13 +2,14 @@
 // Runs as a Vercel serverless function. The Gemini key lives only in the server env (GEMINI_API_KEY).
 // Free-tier models are tried in order; on a rate limit (429) or overload the next one is used.
 
-const MODELS = (process.env.GEMINI_MODELS || 'gemini-3.8-flash,gemini-3.5-flash-lite,gemini-3.1-flash-lite')
+const MODELS = (process.env.GEMINI_MODELS || 'gemini-3.5-flash-lite,gemini-3.1-flash-lite,gemini-3.8-flash')
   .split(',').map((s) => s.trim()).filter(Boolean);
 const ENDPOINT = (m) => `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(m)}:generateContent`;
 
 const SYSTEM = `Sən VisionX-in köməkçisisən. VisionX fermerlər üçün dron və telefon şəkillərindən sahə və yarpaq analizi edən tətbiqdir.
 Qaydalar:
 - Həmişə sadə, düzgün azərbaycan dilində, qısa cavab ver (3–8 cümlə). Lazım olanda qısa siyahı işlət.
+- Cavabı salamla başlama, birbaşa mövzuya keç (istifadəçi özü salam verəndə qısa salamla cavab verə bilərsən).
 - Cavabını aşağıda verilən VisionX nəticəsinə əsaslandır. Nəticədə olmayan faktı uydurma.
 - Model əmin deyilsə (aşağı ehtimal), bunu açıq de və şəkli yenidən çəkməyi və ya aqronoma göstərməyi məsləhət gör.
 - Kimyəvi preparat barədə yalnız ümumi qrup adını (məs. mis tərkibli fungisid) de; konkret doza vermə. Həmişə qeyd et ki, yalnız Azərbaycanda qeydiyyatdan keçmiş preparat, etiketdəki dozaya uyğun və yerli aqronomla məsləhətləşərək istifadə olunmalıdır.
@@ -54,28 +55,48 @@ module.exports = async function handler(req, res) {
     generationConfig: { maxOutputTokens: 2048, temperature: 0.4 },
   };
 
-  let lastErr = 'AI cavab vermədi.';
-  for (const model of MODELS) {
+  // keep answers fast: low thinking on Flash, minimal on Flash-Lite (per Gemini docs)
+  const thinking = (m) => (m.includes('lite') ? 'minimal' : 'low');
+  const started = Date.now(), DEADLINE = 50000, PER_TRY = 15000;
+  const call = async (model, withThinking) => {
+    const body = withThinking
+      ? { ...payload, generationConfig: { ...payload.generationConfig, thinkingConfig: { thinkingLevel: thinking(model) } } }
+      : payload;
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), Math.min(PER_TRY, DEADLINE - (Date.now() - started)));
+    const t0 = Date.now();
     try {
       const r = await fetch(ENDPOINT(model), {
-        method: 'POST',
+        method: 'POST', signal: ctl.signal,
         headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(body),
       });
-      if (r.status === 429 || r.status === 503 || r.status === 500 || r.status === 404) {
+      const data = await r.json().catch(() => ({}));
+      console.log(JSON.stringify({ model, thinking: withThinking, status: r.status, ms: Date.now() - t0 }));
+      return { r, data };
+    } finally { clearTimeout(timer); }
+  };
+
+  let lastErr = 'AI cavab vermədi.';
+  for (const model of MODELS) {
+    if (Date.now() - started > DEADLINE - 3000) break;
+    try {
+      let { r, data } = await call(model, true);
+      if (r.status === 400) ({ r, data } = await call(model, false)); // thinkingConfig not accepted: retry without it
+      if (r.status === 429 || r.status >= 500 || r.status === 404) {
         lastErr = r.status === 429 ? 'Pulsuz AI limiti dolub. Bir az sonra yenidən yoxlayın.' : 'AI xidməti hazırda məşğuldur.';
         continue; // try the next free model
       }
-      const data = await r.json().catch(() => ({}));
-      if (!r.ok) { lastErr = data?.error?.message ? 'AI xətası.' : 'AI xətası.'; continue; }
+      if (!r.ok) { lastErr = 'AI xətası.'; continue; }
       const cand = data?.candidates?.[0];
       const text = (cand?.content?.parts || []).filter((p) => !p.thought).map((p) => p.text || '').join('').trim();
       if (!text) { lastErr = 'AI bu suala cavab vermədi.'; continue; }
       res.status(200).json({ answer: text, model });
       return;
     } catch (e) {
-      lastErr = 'AI xidmətinə qoşulmaq alınmadı.';
+      console.log(JSON.stringify({ model, error: e.name }));
+      lastErr = e.name === 'AbortError' ? 'AI çox gec cavab verdi. Yenidən yoxlayın.' : 'AI xidmətinə qoşulmaq alınmadı.';
     }
   }
-  res.status(502).json({ error: lastErr });
+  res.status(504).json({ error: lastErr });
 };

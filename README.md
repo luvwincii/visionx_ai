@@ -75,7 +75,7 @@ Etiketsiz anomaliya üsulu (şəklin öz ortalamasından fərqlənən hissələr
 
 ## VisionX köməkçisi (Gemini)
 
-Nəticə ekranındakı "VisionX-dən soruş" bölməsi `web/api/chat.js` Vercel funksiyası vasitəsilə Gemini-nin pulsuz modellərinə müraciət edir: `gemini-3.8-flash`, limit dolanda `gemini-3.5-flash-lite`, sonra `gemini-3.1-flash-lite`. Açar yalnız Vercel-də `GEMINI_API_KEY` mühit dəyişənində saxlanılır. Pulsuz planda göndərilən mətn Google tərəfindən məhsullarını yaxşılaşdırmaq üçün istifadə olunur.
+Nəticə ekranındakı "VisionX-dən soruş" bölməsi `web/api/chat.js` Vercel funksiyası vasitəsilə Gemini-nin pulsuz modellərinə müraciət edir: əvvəl sürətli `gemini-3.5-flash-lite` (~1.5 san), limit dolanda və ya cavab gecikəndə `gemini-3.1-flash-lite`, sonra `gemini-3.8-flash`. Hər cəhdə 15 saniyə limit qoyulub (pulsuz planda `gemini-3.8-flash` testlərdə 20 saniyə ərzində cavab vermədi). Açar yalnız Vercel-də `GEMINI_API_KEY` mühit dəyişənində saxlanılır. Pulsuz planda göndərilən mətn Google tərəfindən məhsullarını yaxşılaşdırmaq üçün istifadə olunur.
 
 ## Modeli yenidən öyrətmək
 
