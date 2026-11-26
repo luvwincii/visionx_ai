@@ -108,7 +108,7 @@ class Net(nn.Module):
     def forward(self, x):
         hs = list(self.enc(pixel_values=x, output_hidden_states=True).hidden_states)
         if not getattr(self, '_shown', False):
-            self._shown = True; print('hidden_states shapes:', [tuple(h.shape) for h in hs], flush=True)
+            self._shown = True; print('hidden_states:', len(hs), 'tensors; widths', sorted({h.shape[1] for h in hs}), flush=True)
         for i, f in enumerate(hs):             # some versions return tokens as (B, N, C)
             if f.dim() == 3:
                 B, N, Cc = f.shape; h = int(round(N ** 0.5)); hs[i] = f.transpose(1, 2).reshape(B, Cc, h, N // h)
