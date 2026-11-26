@@ -193,7 +193,6 @@ async function renderField(rec) {
           <button aria-pressed="true" data-layer="overlay">Üst-üstə</button>
           <button aria-pressed="false" data-layer="map">Xəritə</button>
           <button aria-pressed="false" data-layer="ai" hidden>AI səbəblər</button>
-          <button aria-pressed="false" data-layer="ano" hidden>Anomaliya</button>
         </div>
         <div class="legend"><span><i class="dot dot--ok"></i>Sağlam</span><span><i class="dot dot--warn"></i>Risk</span><span><i class="dot dot--bad"></i>Problem</span><span><i class="dot dot--soil"></i>Bitkisiz</span><span><i class="dot dot--void"></i>Analiz edilmir</span></div>
       </div>
@@ -215,7 +214,7 @@ async function renderField(rec) {
         <div class="report__sec" data-ai-sec>
           <p class="label">AI: ehtimal olunan səbəblər <span class="tag">beta</span></p>
           <div data-ai-body>
-            <p class="muted" style="font-size:14px;margin-bottom:12px">Seqmentasiya modeli sahədə quruma, qida çatışmazlığı, alaq, su yığılması, əkin boşluğu və külək zədəsini axtarır. İlk dəfə ~25 MB model yüklənir.</p>
+            <p class="muted" style="font-size:14px;margin-bottom:12px">Seqmentasiya modeli sahədə quruma, qida çatışmazlığı, alaq, su yığılması və əkin boşluğunu axtarır. İlk dəfə ~25 MB model yüklənir.</p>
             <button class="btn btn--primary btn--sm" data-ai-run>AI ilə səbəbləri tap</button>
           </div>
         </div>
@@ -235,14 +234,13 @@ async function renderField(rec) {
   const canvas = $('[data-view-canvas]', r);
   canvas.width = map.width; canvas.height = map.height;
   const ctx = canvas.getContext('2d');
-  const ai = { cls: null, ano: null };
+  const ai = { cls: null };
   const draw = (layer) => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.imageSmoothingEnabled = true;
     if (layer !== 'map') ctx.drawImage(photo, 0, 0, canvas.width, canvas.height);
-    if (layer === 'ai' || layer === 'ano') {
-      const ov = layer === 'ai' ? ai.cls : ai.ano;
-      if (ov) ctx.drawImage(ov, 0, 0, canvas.width, canvas.height);
+    if (layer === 'ai') {
+      if (ai.cls) ctx.drawImage(ai.cls, 0, 0, canvas.width, canvas.height);
     } else if (layer !== 'photo') {
       ctx.imageSmoothingEnabled = true;
       ctx.globalAlpha = layer === 'overlay' ? 0.62 : 1;
@@ -265,14 +263,13 @@ async function renderField(rec) {
   // ---- AI causes (segmentation, beta) ----
   const aiBody = $('[data-ai-body]', r);
   const showAI = async (res) => {
-    [ai.cls, ai.ano] = await Promise.all([loadImage(res.cls), loadImage(res.ano)]);
-    $$('[data-layer="ai"],[data-layer="ano"]', r).forEach((b) => { b.hidden = false; });
+    ai.cls = await loadImage(res.cls);
+    $$('[data-layer="ai"]', r).forEach((b) => { b.hidden = false; });
     const found = res.shares.filter((x) => x.pct >= 0.5);
     aiBody.innerHTML = `
       ${found.length ? `<ul class="advice">${found.map((x) => `<li><i class="dot" style="background:rgb(${x.color.join(',')})"></i><div><b>${esc(x.name)} · ${x.pct}%</b><p>${esc(x.advice)}</p></div></li>`).join('')}</ul>`
         : '<p class="muted" style="font-size:14px">Model bu şəkildə aydın səbəb tapmadı.</p>'}
-      <p class="meta-row"><span>Fərqlənən sahə (anomaliya): ${res.anomalyPct}%</span></p>
-      <p class="note" style="margin-top:12px">Tədqiqat demosu: model Agriculture-Vision datası (ABŞ, təyyarədən çəkilmiş şəkillər, qeyri-kommersiya lisenziya) üzərində öyrədilib. Nəticə ehtimaldır, zonanı yerində yoxlayın. "Anomaliya" qatı etiketsiz üsuldur: sahənin qalan hissəsindən fərqlənən yerləri göstərir.</p>`;
+      <p class="note" style="margin-top:12px">Tədqiqat demosu: model Agriculture-Vision datası (ABŞ, təyyarədən çəkilmiş şəkillər, qeyri-kommersiya tədqiqat lisenziyası) üzərində öyrədilib. Testdə ən dəqiq siniflər su yığılması və qurumadır, alaq və əkin boşluğu daha az dəqiqdir. Nəticə ehtimaldır: zonanı yerində yoxlayın.</p>`;
     draw('ai');
   };
   if (rec.ai) showAI(rec.ai);
@@ -282,7 +279,7 @@ async function renderField(rec) {
     try {
       await loadFieldModel((p) => { txt.textContent = `Model yüklənir: ${Math.round(p * 100)}%`; });
       const res = await analyzeFieldAI(photo, (k, n) => { txt.textContent = `Analiz: ${k + 1}/${n} hissə`; });
-      rec.ai = { cls: res.classes.toDataURL('image/png'), ano: res.anomaly.toDataURL('image/png'), shares: res.shares, anomalyPct: res.anomalyPct };
+      rec.ai = { cls: res.classes.toDataURL('image/png'), shares: res.shares };
       await showAI(rec.ai);
       saveAnalysis(rec).catch(() => {});
     } catch (e) {
@@ -303,7 +300,7 @@ async function renderField(rec) {
     `Şəklin bitki örtüyü ${s.vegCover}%, bitkisiz torpaq ${s.soil}%, analiz edilməyən (su, kölgə, yol) ${s.void}%. Orta VARI ${s.index.toFixed(2)}.`,
     rec.hot.length ? `Ən problemli zonalar (6×6 şəbəkə, A–F sütun, 1–6 sətir): ${rec.hot.map((z) => `${z.id} (problem ${z.bad}%, risk ${z.risk}%)`).join('; ')}.` : 'Xüsusi problemli zona tapılmadı.',
     `Tətbiqin tövsiyələri: ${advice.map((a) => a.t + ': ' + a.d).join(' ')}`,
-    rec.ai ? `AI səbəb modeli (beta, Agriculture-Vision datası ilə öyrədilib): ${rec.ai.shares.filter((x) => x.pct >= 0.5).map((x) => `${x.name} ${x.pct}%`).join(', ') || 'aydın səbəb tapılmadı'}; anomaliya sahəsi ${rec.ai.anomalyPct}%.` : '',
+    rec.ai ? `AI səbəb modeli (beta, Agriculture-Vision datası ilə öyrədilib): ${rec.ai.shares.filter((x) => x.pct >= 0.5).map((x) => `${x.name} ${x.pct}%`).join(', ') || 'aydın səbəb tapılmadı'}.` : '',
   ].join('\n');
   mountAssistant($('[data-chat]', r), fieldCtx, ['Bu xəritə nə deməkdir?', 'Hansı zonaya birinci gedim?', 'Sarı zonalar niyə ola bilər?']);
 }

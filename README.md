@@ -53,6 +53,30 @@ Qeydlər:
 - Buğda xəstəlikləri üçün açıq dataset tapıldı (Project-AgML/wheat_disease_detection), lakin sinif adları nəşr olunmayıb. Etiketləri təxmin etməmək üçün daxil edilmədi. Növbəti addım: Azərbaycanda yerli buğda, pambıq və üzüm şəkilləri toplayıb modeli yenidən öyrətmək.
 - Dron rejimi öyrədilmiş model deyil, RGB vegetasiya indekslərinə (ExG, VARI) əsaslanır. Multispektral NDVI qədər dəqiq deyil, amma adi kamera ilə işləyir. Növbəti mərhələdə dron şəkillərindəki bitkiləri seqmentasiya modeli ilə ayırmaq olar.
 
+## Dron AI səbəbləri (seqmentasiya, beta)
+
+Sahə nəticəsində **"AI ilə səbəbləri tap"** düyməsi var. Dondurulmuş DINOv2-small modeli şəkli 32×32 hissəyə bölür, öyrədilmiş başlıq isə hər hissə üçün sinif ehtimalını verir. Ehtimallar bilinear üsulla böyüdülür, sonra eşik tətbiq olunur. Model int8 ONNX formatındadır (24 MB), brauzerdə işləyir və bir şəkli ~2–3 saniyəyə analiz edir.
+
+- **Data:** Agriculture-Vision (Chiu et al., CVPR 2020), ~8 760 RGB plitə. Lisenziya yalnız qeyri-kommersiya tədqiqata icazə verir. Burada yalnız tələbə müsabiqəsi və sərgi demosu üçün istifadə olunub. Xam data repoda yoxdur.
+- **Test, modelin görmədiyi plitələrdə (IoU):**
+
+| Sinif | IoU | Qeyd |
+|---|---|---|
+| Su yığılması | 0.58 | ən etibarlı sinif |
+| Quruma | 0.38 | |
+| Qida çatışmazlığı | 0.31 | |
+| Alaq | 0.19 | |
+| Əkin boşluğu | 0.14 | zəif |
+| Fırtına zədəsi | – | söndürülüb: öyrətmə nümunəsi çox azdır |
+
+Dəqiqlik (precision) təxminən 40–50%-dir, yəni rənglənən sahənin yarısı həqiqi problemdir. Datanın şəkilləri təyyarədən çəkilib (10–20 sm/piksel), dron şəkillərində miqyas fərqli ola bilər.
+
+Etiketsiz anomaliya üsulu (şəklin öz ortalamasından fərqlənən hissələr) da sınaqdan keçirildi, amma AUROC 0.48 göstərdi, yəni təsadüfi təxmin səviyyəsində. Ona görə məhsula daxil edilmədi. Skriptlər: `ml/agv_*.py`, nəticələr: `ml/agv_results.json`.
+
+## VisionX köməkçisi (Gemini)
+
+Nəticə ekranındakı "VisionX-dən soruş" bölməsi `web/api/chat.js` Vercel funksiyası vasitəsilə Gemini-nin pulsuz modellərinə müraciət edir: `gemini-3.8-flash`, limit dolanda `gemini-3.5-flash-lite`, sonra `gemini-3.1-flash-lite`. Açar yalnız Vercel-də `GEMINI_API_KEY` mühit dəyişənində saxlanılır. Pulsuz planda göndərilən mətn Google tərəfindən məhsullarını yaxşılaşdırmaq üçün istifadə olunur.
+
 ## Modeli yenidən öyrətmək
 
 ```bash

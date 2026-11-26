@@ -1,0 +1,20 @@
+{
+ "classes": [
+  "drydown",
+  "nutrient_deficiency",
+  "weed_cluster",
+  "water",
+  "planter_skip",
+  "storm_damage"
+ ],
+ "thr": [
+  0.7,
+  0.5,
+  0.5,
+  0.4,
+  0.3,
+  1.01
+ ],
+ "size": 448,
+ "grid": 32
+}

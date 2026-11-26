@@ -1,6 +1,7 @@
-// VisionX field AI (research demo): DINOv2-small + segmentation head trained on Agriculture-Vision (RGB).
-// A) per-patch probabilities for 6 field anomaly classes
-// B) label-free anomaly: how different each patch is from the rest of the same photo
+// VisionX field AI (research demo): DINOv2-small + segmentation head trained on Agriculture-Vision (RGB only).
+// Per 14×14-pixel patch of a 448×448 tile the model gives a probability for each field anomaly class.
+// Held-out test IoU (int8, demo thresholds): water 0.58, drydown 0.38, nutrient deficiency 0.31,
+// weed 0.19, planter skip 0.14; precision about 40-50%. Storm damage is disabled (too few training samples).
 const MODEL_URL = new URL('../models/visionx-field.onnx', import.meta.url).href;
 const META_URL = new URL('../models/field_labels.json', import.meta.url).href;
 const ORT_URL = new URL('../vendor/ort/ort.wasm.min.mjs', import.meta.url).href;
@@ -51,12 +52,13 @@ function tileTensor(src, sx, sy, sw, sh, S) {
   return t;
 }
 
-// src: canvas or image. Returns overlay canvases (W×H of src) and per-class area shares.
+// src: canvas or image. Returns an overlay canvas (W×H of src) and per-class area shares.
 export async function analyzeFieldAI(src, onStep) {
   const session = await loadFieldModel();
-  const W = src.width, H = src.height, S = meta.size, G = meta.grid, C = meta.classes.length;
-  // 2 tiles along each side, square, overlapping when the photo is not square
-  const tile = Math.ceil(Math.max(W, H) / 2 > Math.min(W, H) ? Math.min(W, H) : Math.max(W, H) / 2);
+  const W = src.width, H = src.height, S = meta.size, G = meta.grid, C = meta.classes.length, N = G * G;
+  // Square tiles as large as the short side (the model was trained on whole field tiles, not zoomed crops);
+  // a 3:2 photo becomes 2 overlapping tiles, a square photo 1.
+  const tile = Math.min(W, H);
   const nx = Math.max(1, Math.ceil(W / tile)), ny = Math.max(1, Math.ceil(H / tile));
   const tiles = [];
   for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) {
@@ -64,62 +66,48 @@ export async function analyzeFieldAI(src, onStep) {
     const y = ny === 1 ? 0 : Math.round((j * (H - tile)) / (ny - 1));
     tiles.push({ x, y, w: Math.min(tile, W), h: Math.min(tile, H) });
   }
-  const results = [];
+
+  const overlay = document.createElement('canvas'); overlay.width = W; overlay.height = H;
+  const octx = overlay.getContext('2d'); octx.imageSmoothingEnabled = true;
+  const area = new Array(C).fill(0); let tokTotal = 0;
   for (let k = 0; k < tiles.length; k++) {
     onStep?.(k, tiles.length);
     const t = tiles[k];
     const out = await session.run({ pixel_values: new ort.Tensor('float32', tileTensor(src, t.x, t.y, t.w, t.h, S), [1, 3, S, S]) });
-    results.push({ t, probs: out.probs.data, tokens: out.tokens.data });
-  }
-  // B) label-free anomaly: whitened distance from the photo's mean token
-  const D = 384, N = G * G;
-  const mu = new Float64Array(D), sq = new Float64Array(D); let cnt = 0;
-  for (const r of results) for (let i = 0; i < N; i++) { for (let d = 0; d < D; d++) { const v = r.tokens[i * D + d]; mu[d] += v; sq[d] += v * v; } cnt++; }
-  const sd = new Float64Array(D);
-  for (let d = 0; d < D; d++) { mu[d] /= cnt; sd[d] = Math.sqrt(Math.max(1e-6, sq[d] / cnt - mu[d] * mu[d])); }
-  const scores = [];
-  for (const r of results) {
-    const s = new Float32Array(N);
-    for (let i = 0; i < N; i++) { let a = 0; for (let d = 0; d < D; d++) { const z = (r.tokens[i * D + d] - mu[d]) / sd[d]; a += z * z; } s[i] = a / D; }
-    scores.push(s);
-  }
-  const all = scores.flatMap((s) => Array.from(s)).sort((a, b) => a - b);
-  const med = all[Math.floor(all.length / 2)], p95 = all[Math.floor(all.length * 0.95)];
-
-  // Render overlays (smooth: 32×32 per tile, scaled with bilinear filtering)
-  const clsCanvas = document.createElement('canvas'); clsCanvas.width = W; clsCanvas.height = H;
-  const anoCanvas = document.createElement('canvas'); anoCanvas.width = W; anoCanvas.height = H;
-  const cctx = clsCanvas.getContext('2d'), actx = anoCanvas.getContext('2d');
-  cctx.imageSmoothingEnabled = true; actx.imageSmoothingEnabled = true;
-  const area = new Array(C).fill(0); let tokTotal = 0, anoCount = 0;
-  results.forEach((r, k) => {
-    const small = document.createElement('canvas'); small.width = G; small.height = G;
-    const sctx = small.getContext('2d'); const id = sctx.createImageData(G, G);
-    const asmall = document.createElement('canvas'); asmall.width = G; asmall.height = G;
-    const asctx = asmall.getContext('2d'); const aid = asctx.createImageData(G, G);
+    const probs = out.probs.data;
+    // area shares on the patch grid
     for (let i = 0; i < N; i++) {
       let best = -1, bp = 0;
-      for (let c = 0; c < C; c++) {
-        const p = r.probs[i * C + c], th = meta.thr[c];
-        if (p >= th && p - th > bp) { bp = p - th; best = c; }
-      }
-      tokTotal++;
-      if (best >= 0) {
-        area[best]++;
-        const col = FIELD_CLASSES[meta.classes[best]].color;
-        id.data[i * 4] = col[0]; id.data[i * 4 + 1] = col[1]; id.data[i * 4 + 2] = col[2];
-        id.data[i * 4 + 3] = Math.round(255 * Math.min(0.9, 0.45 + bp * 2));
-      }
-      const z = (scores[k][i] - med) / Math.max(1e-6, p95 - med);
-      if (z > 1) anoCount++;
-      const a = Math.max(0, Math.min(1, (z - 0.6) / 0.8));
-      aid.data[i * 4] = 255; aid.data[i * 4 + 1] = 80; aid.data[i * 4 + 2] = 40; aid.data[i * 4 + 3] = Math.round(220 * a);
+      for (let c = 0; c < C; c++) { const p = probs[i * C + c], th = meta.thr[c]; if (p >= th && p - th >= bp) { bp = p - th; best = c; } }
+      tokTotal++; if (best >= 0) area[best]++;
     }
-    sctx.putImageData(id, 0, 0); asctx.putImageData(aid, 0, 0);
-    cctx.drawImage(small, r.t.x, r.t.y, r.t.w, r.t.h);
-    actx.drawImage(asmall, r.t.x, r.t.y, r.t.w, r.t.h);
-  });
+    // smooth rendering: bilinearly upsample the probabilities (32 → R), then threshold per pixel
+    const R = 256, sc = G / R, id = octx.createImageData(R, R);
+    const pv = new Float32Array(C);
+    for (let y = 0; y < R; y++) {
+      const fy = Math.min(G - 1, Math.max(0, (y + 0.5) * sc - 0.5)), y0 = Math.floor(fy), y1 = Math.min(G - 1, y0 + 1), wy = fy - y0;
+      for (let x = 0; x < R; x++) {
+        const fx = Math.min(G - 1, Math.max(0, (x + 0.5) * sc - 0.5)), x0 = Math.floor(fx), x1 = Math.min(G - 1, x0 + 1), wx = fx - x0;
+        const a = (y0 * G + x0) * C, b = (y0 * G + x1) * C, c2 = (y1 * G + x0) * C, d = (y1 * G + x1) * C;
+        let best = -1, bp = 0;
+        for (let c = 0; c < C; c++) {
+          pv[c] = (probs[a + c] * (1 - wx) + probs[b + c] * wx) * (1 - wy) + (probs[c2 + c] * (1 - wx) + probs[d + c] * wx) * wy;
+          const m = pv[c] - meta.thr[c];
+          if (m >= 0 && m >= bp) { bp = m; best = c; }
+        }
+        if (best >= 0) {
+          const col = FIELD_CLASSES[meta.classes[best]].color, o = (y * R + x) * 4;
+          id.data[o] = col[0]; id.data[o + 1] = col[1]; id.data[o + 2] = col[2];
+          id.data[o + 3] = Math.round(255 * Math.min(0.85, 0.55 + bp));
+        }
+      }
+    }
+    const small = document.createElement('canvas'); small.width = R; small.height = R;
+    small.getContext('2d').putImageData(id, 0, 0);
+    octx.drawImage(small, t.x, t.y, t.w, t.h);
+  }
   const shares = meta.classes.map((c, i) => ({ key: c, ...FIELD_CLASSES[c], pct: Math.round((1000 * area[i]) / tokTotal) / 10 }))
+    .filter((x, i) => meta.thr[i] <= 1)
     .sort((a, b) => b.pct - a.pct);
-  return { classes: clsCanvas, anomaly: anoCanvas, shares, anomalyPct: Math.round((1000 * anoCount) / tokTotal) / 10, tiles: tiles.length };
+  return { classes: overlay, shares, tiles: tiles.length };
 }
