@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="az">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mənbələr və məxfilik — VisionX</title>
+<meta name="theme-color" content="#0c0f0e">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+<header class="nav is-scrolled">
+  <div class="wrap nav__inner">
+    <a class="logo" href="./"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="1" width="10" height="10" rx="1.5" fill="#2ea043"/><rect x="13" y="1" width="10" height="10" rx="1.5" fill="#2ea043"/><rect x="1" y="13" width="10" height="10" rx="1.5" fill="#e3b341"/><rect x="13" y="13" width="10" height="10" rx="1.5" fill="#da3633"/></svg><span>VisionX</span></a>
+    <a class="btn btn--primary btn--sm" href="app/">VisionX-i sınayın</a>
+  </div>
+</header>
+<main class="doc">
+  <div class="wrap">
+    <p class="eyebrow">Hüquqi</p>
+    <h1>Mənbələr və məxfilik</h1>
+
+    <h2 id="mexfilik">Məxfilik</h2>
+    <p>VisionX tətbiqində şəkillərin analizi sizin cihazınızda, brauzerin içində aparılır. Yüklədiyiniz şəkillər serverə göndərilmir. Analiz tarixçəsi yalnız bu cihazın brauzer yaddaşında (IndexedDB) saxlanılır və "Sahələrim" bölməsindən silinə bilər.</p>
+    <p>Əlaqə forması e-poçt tətbiqinizi açır. Mesajı göndərməyinizə qədər heç bir məlumat bizə ötürülmür.</p>
+
+    <h2>AI modeli</h2>
+    <ul>
+      <li>Əsas model: <a href="https://huggingface.co/facebook/dinov2-small">DINOv2-small</a> (Meta AI, Apache-2.0). VisionX təsnifat başlığı açıq datasetlər üzərində öyrədilib.</li>
+      <li>İş vaxtı: <a href="https://onnxruntime.ai">ONNX Runtime Web</a> (MIT).</li>
+    </ul>
+
+    <h2>Öyrətmə datasetləri</h2>
+    <ul>
+      <li>PlantVillage: Hughes &amp; Salathé, 2015 (CC BY-SA 3.0), <a href="https://huggingface.co/datasets/BrandonFors/Plant-Diseases-PlantVillage-Dataset">Hugging Face güzgüsü</a>.</li>
+      <li>PlantDoc: Singh et al., 2020 (CC BY-SA 4.0), <a href="https://huggingface.co/datasets/Project-AgML/plant_doc_classification">Project-AgML</a>.</li>
+      <li>Cotton Leaf Disease Bangladesh 2 (CC BY 4.0), <a href="https://huggingface.co/datasets/Project-AgML/cotton_leaf_disease_classification_bangladesh_2">Project-AgML</a>.</li>
+      <li>Grape Leaf Disease Classification (CC BY 4.0), <a href="https://huggingface.co/datasets/Project-AgML/grape_leaf_disease_classification">Project-AgML</a>.</li>
+      <li>"Bitki deyil" sinfi üçün: Imagenette (fast.ai), <a href="https://huggingface.co/datasets/johnowhitaker/imagenette2-320">Hugging Face</a>.</li>
+    </ul>
+
+    <h2>Fotoşəkillər</h2>
+    <ul>
+      <li>Üzüm bağı: Taxiarchos228, "Aerial View - Landschaft Markgräflerland1", <a href="https://commons.wikimedia.org/wiki/File:Aerial_View_-_Landschaft_Markgr%C3%A4flerland1.jpg">Wikimedia Commons</a>, CC BY.</li>
+      <li>Suvarma kanalı və sahələr: Vraj Acharya, WELL Labs, <a href="https://commons.wikimedia.org/wiki/File:Narayanpur_Right_Bank_Canal_distributary_10_aerial_irrigation_network_Karnataka_India.jpg">Wikimedia Commons</a>, CC BY-SA 4.0. Kəsilib, sağlamlıq xəritəsi əlavə olunub.</li>
+      <li>Düyü sahəsində dron: Benlisquare, <a href="https://commons.wikimedia.org/wiki/File:Agricultural_drone_in_use_on_rice_field_near_Nisoshi,_Aomori.jpg">Wikimedia Commons</a>, CC BY-SA 4.0. Kəsilib.</li>
+      <li>Nümunə yarpaq şəkilləri: Cotton Leaf Disease Bangladesh 2 (CC BY 4.0), Grape Leaf Disease Classification (CC BY 4.0), PlantVillage (CC BY-SA 3.0). Test hissəsindən götürülüb.</li>
+    </ul>
+
+    <h2>Şriftlər</h2>
+    <p>Geist və Geist Mono, Vercel (SIL Open Font License 1.1).</p>
+  </div>
+</main>
+<footer class="footer"><div class="wrap footer__base"><span>© 2026 VisionX</span><a href="./">Ana səhifə</a></div></footer>
+</body>
+</html>

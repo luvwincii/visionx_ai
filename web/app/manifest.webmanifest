@@ -1,0 +1,11 @@
+{
+  "name": "VisionX — sahə analizi",
+  "short_name": "VisionX",
+  "lang": "az",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0c0f0e",
+  "theme_color": "#0c0f0e",
+  "icons": [{ "src": "../assets/img/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

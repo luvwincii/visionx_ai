@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="az">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VisionX — dron və telefonla sahə monitorinqi</title>
+<meta name="description" content="VisionX dron və ya telefon şəklini sahənin sağlamlıq xəritəsinə çevirir: yaşıl sağlam, sarı risk, qırmızı problem. Xəstəliyi tanıyır və nə etməli olduğunuzu azərbaycanca izah edir.">
+<meta name="theme-color" content="#0c0f0e">
+<meta property="og:title" content="VisionX — sahənizi yuxarıdan görün">
+<meta property="og:description" content="Dron və ya telefon şəklindən sahənin sağlamlıq xəritəsi və xəstəlik diaqnozu.">
+<meta property="og:image" content="assets/img/field-vineyard.webp">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="assets/fonts/geist-sans-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/geist-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+
+<header class="nav" id="top">
+  <div class="wrap nav__inner">
+    <a class="logo" href="#top" aria-label="VisionX ana səhifə">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="1" width="10" height="10" rx="1.5" fill="#2ea043"/><rect x="13" y="1" width="10" height="10" rx="1.5" fill="#2ea043"/><rect x="1" y="13" width="10" height="10" rx="1.5" fill="#e3b341"/><rect x="13" y="13" width="10" height="10" rx="1.5" fill="#da3633"/></svg>
+      <span>VisionX</span>
+    </a>
+    <nav class="nav__links" aria-label="Əsas menyu">
+      <a href="#nece-isleyir">Necə işləyir</a>
+      <a href="#rejimler">Dron və telefon</a>
+      <a href="#missiya">Missiya</a>
+      <a href="#kimler-ucun">Kimlər üçün</a>
+      <a href="#elaqe">Əlaqə</a>
+    </nav>
+    <div class="nav__cta">
+      <a class="btn btn--primary btn--sm" href="app/">VisionX-i sınayın
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 11 11 5M6 5h5v5"/></svg></a>
+      <button class="nav__toggle" aria-label="Menyunu aç" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span></button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobile-menu" hidden>
+    <a href="#nece-isleyir">Necə işləyir</a>
+    <a href="#rejimler">Dron və telefon</a>
+    <a href="#missiya">Missiya</a>
+    <a href="#kimler-ucun">Kimlər üçün</a>
+    <a href="#elaqe">Əlaqə</a>
+    <a class="btn btn--primary" href="app/">VisionX-i sınayın</a>
+  </div>
+</header>
+
+<main>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap hero__grid">
+    <div class="hero__copy">
+      <p class="eyebrow">Sahə monitorinqi, sadə dildə</p>
+      <h1>Sahənizi<br>yuxarıdan<br>görün<span class="accent">.</span></h1>
+      <p class="lead">VisionX dronun və ya telefonun çəkdiyi adi şəkli sahənin sağlamlıq xəritəsinə çevirir. Problemi yayılmadan görürsünüz, dərmanı isə yalnız lazım olan yerə vurursunuz.</p>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="app/">VisionX-i sınayın
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 11 11 5M6 5h5v5"/></svg></a>
+        <a class="btn btn--ghost" href="#elaqe">Bizimlə işləyin</a>
+      </div>
+      <p class="hero__note"><span class="tag tag--accent">Kiçik fermerlərə icarə</span> <span class="muted">dron almadan xidmət kimi</span></p>
+    </div>
+
+    <figure class="compare" data-compare data-src="assets/img/field-vineyard.webp">
+      <img class="compare__photo" src="assets/img/field-vineyard.webp" alt="Üzüm bağının yuxarıdan çəkilmiş adi fotosu" width="1440" height="954" fetchpriority="high">
+      <div class="compare__map" aria-hidden="true"><canvas></canvas></div>
+      <span class="compare__label compare__label--l">Adi foto</span>
+      <span class="compare__label compare__label--r">Sağlamlıq xəritəsi</span>
+      <div class="compare__handle" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 4 2 8l4 4M10 4l4 4-4 4"/></svg></div>
+      <input class="compare__range" type="range" min="0" max="100" value="50" aria-label="Foto ilə xəritə arasında sürüşdürün">
+      <figcaption>
+        <span class="legend"><span><i class="dot dot--ok"></i>Sağlam</span><span><i class="dot dot--warn"></i>Risk</span><span><i class="dot dot--bad"></i>Problem</span><span><i class="dot dot--soil"></i>Bitkisiz</span></span>
+        <span class="compare__hint">Sürüşdürün: xəritə bu səhifədə, brauzerinizdə hesablanır.</span>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- CROPS STRIP (replaces press logos) -->
+<section class="strip" aria-label="Dəstəklənən bitkilər">
+  <div class="wrap strip__inner">
+    <p class="eyebrow eyebrow--muted">Telefonla diaqnoz dəstəklənən bitkilər</p>
+    <ul class="strip__list">
+      <li>Pomidor</li><li>Kartof</li><li>Üzüm</li><li>Pambıq</li><li>Qarğıdalı</li><li>Alma</li><li>Bibər</li><li>Çiyələk</li><li>Şaftalı</li><li>Albalı</li><li>Balqabaq</li>
+    </ul>
+  </div>
+</section>
+
+<!-- THE PROBLEM -->
+<section class="section" id="problem">
+  <div class="wrap split">
+    <div>
+      <p class="eyebrow">Problem</p>
+      <h2>Onlarla hektarı hər gün gəzmək mümkün deyil.</h2>
+      <p class="lead">Xəstəlik, zərərverici və ya susuzluq sahənin bir küncündə başlayır. Fermer onu çox vaxt artıq yayılandan sonra görür. Nəticədə ya məhsulun bir hissəsi itir, ya da problemin yeri bilinmədiyi üçün dərman <strong>bütün sahəyə</strong> vurulur. Bu həm pul itkisidir, həm də torpağa və ətraf mühitə əlavə zərər.</p>
+      <dl class="stats3">
+        <div><dt>1 uçuş</dt><dd>bütün sahə bir neçə dəqiqəyə çəkilir</dd></div>
+        <div><dt>Saniyələr</dt><dd>şəkildən oxunaqlı xəritəyə qədər</dd></div>
+        <div><dt>Oflayn</dt><dd>analiz telefonda gedir, internet şərt deyil</dd></div>
+      </dl>
+    </div>
+    <div class="stack">
+      <div class="card ways">
+        <p class="ways__title">Sahənin vəziyyətini bilməyin yolları</p>
+        <ul>
+          <li><span class="x">×</span>Sahəni piyada gəzmək<span class="muted">günlər çəkir</span></li>
+          <li><span class="x">×</span>Peyk şəkilləri<span class="muted">köhnə və kobud</span></li>
+          <li><span class="x">×</span>Aqronom səfəri<span class="muted">hər dəfə ödənişli</span></li>
+          <li class="ways__us"><span class="logo logo--sm"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="1" width="10" height="10" rx="1.5" fill="#2ea043"/><rect x="13" y="1" width="10" height="10" rx="1.5" fill="#2ea043"/><rect x="1" y="13" width="10" height="10" rx="1.5" fill="#e3b341"/><rect x="13" y="13" width="10" height="10" rx="1.5" fill="#da3633"/></svg>VisionX</span><span>Dron və ya telefon kamerası</span></li>
+        </ul>
+      </div>
+      <div class="card readings">
+        <div class="readings__head"><span>Zona hesabatı</span><span>Nümunə</span></div>
+        <ul>
+          <li><i class="dot dot--ok"></i><b class="mono">B2</b><span>Sıx, sağlam bitki örtüyü</span></li>
+          <li><i class="dot dot--warn"></i><b class="mono">D4</b><span>Erkən stress: suvarmanı yoxlayın</span></li>
+          <li><i class="dot dot--bad"></i><b class="mono">E5</b><span>Zəif örtük: yerində baxın</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="nece-isleyir">
+  <div class="wrap">
+    <p class="eyebrow">Necə işləyir</p>
+    <h2 class="h2--narrow">Oxuna bilən sahə, üç addımda.</h2>
+
+    <div class="steps">
+      <article class="step">
+        <div class="step__text">
+          <p class="step__num mono">01</p>
+          <h3>Çəkin</h3>
+          <p class="muted">Dronu sahənin üstündən uçurun və ya telefonla xəstə görünən yarpağı yaxından çəkin. Multispektral sensor, peyk və kalibrləmə lazım deyil. Adi rəngli şəkil kifayətdir.</p>
+        </div>
+        <figure class="step__media"><img src="assets/img/drone-rice.webp" alt="Düyü sahəsinin üzərində uçan kənd təsərrüfatı dronu" loading="lazy" width="1200" height="873"></figure>
+      </article>
+
+      <article class="step step--rev">
+        <div class="step__text">
+          <p class="step__num mono">02</p>
+          <h3>Analiz</h3>
+          <p class="muted">VisionX modeli şəkli saniyələr içində təhlil edir. Dron şəkli zonalara bölünmüş rəngli xəritəyə çevrilir. Yarpaq şəklində isə bitki və xəstəlik tanınır.</p>
+        </div>
+        <figure class="step__media step__media--map" data-livemap data-src="assets/img/field-canal.webp">
+          <canvas aria-label="Suvarma kanalı ətrafındakı sahələrin sağlamlıq xəritəsi" role="img"></canvas>
+          <span class="compare__label compare__label--r">Sağlamlıq xəritəsi</span>
+        </figure>
+      </article>
+
+      <article class="step">
+        <div class="step__text">
+          <p class="step__num mono">03</p>
+          <h3>Tədbir görün</h3>
+          <p class="muted">Telefonunuzda problemli zonaları və onların payını görürsünüz. Tətbiq problemin nə olduğunu və nə etmək lazım olduğunu azərbaycanca izah edir. Bütün sahəni gəzmirsiniz, yalnız qırmızı nöqtələrə gedirsiniz.</p>
+        </div>
+        <figure class="step__media step__media--shot"><img src="assets/img/app-result.webp" alt="VisionX tətbiqində sahə hesabatı: xəritə, zonalar və tövsiyələr" loading="lazy" width="1400" height="894"></figure>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- TWO MODES -->
+<section class="section" id="rejimler">
+  <div class="wrap">
+    <p class="eyebrow">Dron və telefon</p>
+    <h2 class="h2--narrow">Bir platforma, iki göz.</h2>
+    <p class="lead lead--narrow">Dron sahənin hansı hissəsində problem olduğunu göstərir. Telefon isə o yerdə nə baş verdiyini söyləyir.</p>
+    <div class="modes">
+      <article class="card mode">
+        <div class="mode__head"><span class="tag">Dron rejimi</span><span class="mono muted">sahə xəritəsi</span></div>
+        <h3>Bütün sahə bir baxışda</h3>
+        <ul class="checks">
+          <li>Yuxarıdan çəkilmiş adi RGB şəkil və ya ortofoto</li>
+          <li>Yaşıl, sarı, qırmızı zonalar və onların faizi</li>
+          <li>Bitkisiz sahələr, su və yollar ayrıca göstərilir</li>
+          <li>Ən problemli zonaların siyahısı: A1–F6</li>
+        </ul>
+      </article>
+      <article class="card mode">
+        <div class="mode__head"><span class="tag">Telefon rejimi</span><span class="mono muted">yarpaq diaqnozu</span></div>
+        <h3>Xəstəliyin adı və müalicə yolu</h3>
+        <ul class="checks">
+          <li><span data-stat="classes">48</span> diaqnoz (xəstəlik, zərərverici və sağlam vəziyyət), <span data-stat="crops">15</span> bitki</li>
+          <li>Ehtimal faizi və alternativ diaqnozlar</li>
+          <li>Azərbaycanca izah və konkret addımlar</li>
+          <li>Şəkil telefondan kənara çıxmır</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- MISSION / BUSINESS MODEL -->
+<section class="section" id="missiya">
+  <div class="wrap">
+    <p class="eyebrow">Missiya</p>
+    <h2 class="h2--narrow">Qarabağdan başlayaraq bütün Azərbaycanda daha məhsuldar kənd təsərrüfatı.</h2>
+    <div class="split split--mission">
+      <div class="mission__text">
+        <p class="lead">Bərpa olunan torpaqlarda yeni sahələr salınır. Bu sahələrin ilk mövsümlərində hər itən hektar baha başa gəlir. Sahənin vəziyyətini görmək indiyədək yalnız böyük təsərrüfatların gücü çatan bahalı alətlərlə mümkün idi.</p>
+        <p class="lead">VisionX bu bilgini <strong>adi kamera ilə</strong> verir. Aqroparklar dron paketi və abunə ilə işləyir, dron ala bilməyən kiçik fermer isə xidməti icarə kimi alır. <strong>Bir dron bir neçə fermerə xidmət edir.</strong></p>
+        <blockquote>Məqsəd: problemi yayılmadan tutmaq, dərmanı yalnız lazım olan yerə vurmaq.</blockquote>
+      </div>
+      <div class="flow" aria-label="Biznes modeli">
+        <div class="card flow__node"><span class="tag">Birdəfəlik</span><b>Dron paketi</b><span class="muted">Analiz üçün hazırlanmış dron, fermerlərə və aqroparklara</span></div>
+        <div class="flow__link"><span>qurulur</span></div>
+        <div class="card flow__node flow__node--core"><span class="tag tag--accent">Əsas gəlir</span><b>Analiz abunəsi</b><span class="muted">Hektar başına, mövsümlük</span></div>
+        <div class="flow__link"><span>genişlənir</span></div>
+        <div class="card flow__node"><span class="tag">Xidmət</span><b>Kiçik fermerlər üçün icarə</b><span class="muted">Operator uçuşu edir, fermer nəticəni telefonda alır</span></div>
+      </div>
+    </div>
+    <dl class="bigstats">
+      <div><dt data-stat="acc">—</dt><dd>real sahə şəkillərində dəqiq diaqnoz (açıq test dəsti)</dd></div>
+      <div><dt data-stat="hd">—</dt><dd>sağlam və xəstə yarpağı düzgün ayırır</dd></div>
+      <div><dt class="accent">RGB</dt><dd>adi kamera kifayətdir, multispektral sensor tələb olunmur</dd></div>
+    </dl>
+  </div>
+</section>
+
+<!-- WHO IT'S FOR -->
+<section class="section" id="kimler-ucun">
+  <div class="wrap">
+    <p class="eyebrow">Kimlər üçün</p>
+    <h2 class="h2--narrow">Sahənin ölçüsünə uyğun üç yol.</h2>
+    <p class="lead lead--narrow">Hansı tərəfdə olmağınızdan asılı olmayaraq bizə eyni yolla yazırsınız. Kim olduğunuzu deyin, sizə uyğun yolu göstərək.</p>
+    <div class="plans">
+      <article class="card plan">
+        <span class="plan__kicker mono">Birdəfəlik</span>
+        <h3>Dron paketi</h3>
+        <p class="muted">Fermerlər və aqroparklar üçün analizə hazır dron. Uçuş marşrutu, kamera ayarları və ilk təlim daxildir.</p>
+        <ul class="checks">
+          <li>Analiz üçün sazlanmış kamera</li>
+          <li>Sahəyə uyğun uçuş planı</li>
+          <li>Operator təlimi</li>
+        </ul>
+        <a class="plan__link" href="#elaqe" data-role="Dron paketi">Təklif alın <span aria-hidden="true">→</span></a>
+      </article>
+      <article class="card plan plan--core">
+        <span class="plan__kicker mono">Mövsümlük · hektar başına</span>
+        <h3>Analiz abunəsi</h3>
+        <p class="muted">Hər uçuşdan sonra xəritə, zona hesabatı və tövsiyələr. Mövsüm boyu sahənin dəyişməsini izləyin.</p>
+        <ul class="checks">
+          <li>Limitsiz uçuş analizi</li>
+          <li>Telefonla yarpaq diaqnozu</li>
+          <li>Sahələr və tarixçə bir yerdə</li>
+        </ul>
+        <a class="plan__link" href="#elaqe" data-role="Analiz abunəsi">Abunə olun <span aria-hidden="true">→</span></a>
+      </article>
+      <article class="card plan">
+        <span class="plan__kicker mono">Xidmət kimi</span>
+        <h3>Kiçik fermerlər üçün icarə</h3>
+        <p class="muted">Dron almağa ehtiyac yoxdur. Operatorumuz sahənizi çəkir, nəticəni telefonunuzda alırsınız.</p>
+        <ul class="checks">
+          <li>Uçuş başına ödəniş</li>
+          <li>Qonşu sahələrlə birgə marşrut</li>
+          <li>Eyni hesabat və tövsiyələr</li>
+        </ul>
+        <a class="plan__link" href="#elaqe" data-role="İcarə xidməti">Uçuş sifariş edin <span aria-hidden="true">→</span></a>
+      </article>
+    </div>
+    <div class="audience">
+      <p class="eyebrow eyebrow--muted">Kimlərlə işləyirik</p>
+      <ul><li>Ailə təsərrüfatları</li><li>Aqroparklar</li><li>Kooperativlər</li><li>Aqronomlar</li><li>Dron xidməti komandaları</li><li>Bağçılıq təsərrüfatları</li><li>Pambıqçılıq</li><li>Üzümçülük</li><li>Tədqiqatçılar</li><li>Dövlət qurumları</li></ul>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section" id="elaqe">
+  <div class="wrap split split--contact">
+    <div>
+      <p class="eyebrow">Bizimlə işləyin</p>
+      <h2>Nə üzərində işlədiyinizi bizə yazın.</h2>
+      <p class="lead">Fermerlər, aqroparklar, dron komandaları, aqronomlar, tədqiqatçılar. Sahənizi daha sadə və ucuz yolla izləmək istəyirsinizsə, bizə yazın.</p>
+      <p class="contact__mail muted">və ya birbaşa e-poçt: <a data-email href="mailto:info@visionx.az">info@visionx.az</a></p>
+    </div>
+    <form class="card form" id="contact-form" novalidate>
+      <div class="form__row">
+        <label><span>Ad *</span><input name="name" required autocomplete="name"></label>
+        <label><span>Təsərrüfat / təşkilat</span><input name="org" autocomplete="organization"></label>
+      </div>
+      <label><span>Siz kimsiniz</span>
+        <select name="role">
+          <option value="">Birini seçin</option>
+          <option>Fermer / ailə təsərrüfatı</option>
+          <option>Aqropark</option>
+          <option>Dron xidməti komandası</option>
+          <option>Aqronom / tədqiqatçı</option>
+          <option>Dövlət qurumu</option>
+          <option>Digər</option>
+        </select>
+      </label>
+      <div class="form__row">
+        <label><span>E-poçt *</span><input name="email" type="email" required autocomplete="email"></label>
+        <label><span>Sahə ölçüsü (ha)</span><input name="ha" inputmode="decimal"></label>
+      </div>
+      <label><span>Necə kömək edə bilərik? *</span><textarea name="msg" rows="4" required></textarea></label>
+      <button class="btn btn--primary" type="submit">Mesajı göndərin</button>
+      <p class="form__status" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <div class="wrap cta__inner">
+    <p class="eyebrow">Hamı üçün açıqdır</p>
+    <h2>Sahənizi oxumağa başlayın.</h2>
+    <p class="lead">Sahənin şəklini gətirin. Saniyələr içində sağlamlıq xəritəsinə çevrildiyini görün.</p>
+    <div class="hero__actions hero__actions--center">
+      <a class="btn btn--primary" href="app/">VisionX-i sınayın</a>
+      <a class="btn btn--ghost" href="#elaqe">Bizimlə işləyin</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap footer__inner">
+    <div class="footer__brand">
+      <a class="logo" href="#top"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="1" width="10" height="10" rx="1.5" fill="#2ea043"/><rect x="13" y="1" width="10" height="10" rx="1.5" fill="#2ea043"/><rect x="1" y="13" width="10" height="10" rx="1.5" fill="#e3b341"/><rect x="13" y="13" width="10" height="10" rx="1.5" fill="#da3633"/></svg><span>VisionX</span></a>
+      <p class="muted">AI ilə dron və telefon əsaslı sahə monitorinqi.</p>
+    </div>
+    <nav class="footer__cols" aria-label="Alt menyu">
+      <div><p class="eyebrow eyebrow--muted">Məhsul</p><a href="app/">VisionX-i sınayın</a><a href="#nece-isleyir">Necə işləyir</a><a href="#rejimler">Dron və telefon</a></div>
+      <div><p class="eyebrow eyebrow--muted">Şirkət</p><a href="#missiya">Missiya</a><a href="#kimler-ucun">Kimlər üçün</a><a href="#elaqe">Əlaqə</a></div>
+      <div><p class="eyebrow eyebrow--muted">Hüquqi</p><a href="credits.html">Şəkil və data mənbələri</a><a href="credits.html#mexfilik">Məxfilik</a></div>
+    </nav>
+  </div>
+  <div class="wrap footer__base"><span>© <span data-year>2026</span> VisionX. Bütün hüquqlar qorunur.</span><span class="mono">Bakı · Qarabağ</span></div>
+</footer>
+
+<script type="module" src="assets/js/site.js"></script>
+</body>
+</html>

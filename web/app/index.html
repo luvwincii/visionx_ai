@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="az">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>VisionX — Sahə analizi</title>
+<meta name="description" content="Dron və ya telefon şəklini yükləyin: sahənin sağlamlıq xəritəsi və yarpaq xəstəliyi diaqnozu.">
+<meta name="theme-color" content="#0c0f0e">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="../assets/css/base.css">
+<link rel="stylesheet" href="../assets/css/app.css">
+</head>
+<body class="app">
+
+<header class="appbar">
+  <div class="appbar__inner">
+    <a class="logo" href="../" aria-label="VisionX sayt">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="1" width="10" height="10" rx="1.5" fill="#2ea043"/><rect x="13" y="1" width="10" height="10" rx="1.5" fill="#2ea043"/><rect x="1" y="13" width="10" height="10" rx="1.5" fill="#e3b341"/><rect x="13" y="13" width="10" height="10" rx="1.5" fill="#da3633"/></svg>
+      <span>VisionX</span>
+    </a>
+    <nav class="tabs" role="tablist" aria-label="Bölmələr">
+      <button role="tab" class="tabs__btn" aria-selected="true" data-view="new">Yeni analiz</button>
+      <button role="tab" class="tabs__btn" aria-selected="false" data-view="fields">Sahələrim <span class="tabs__count" data-count hidden></span></button>
+    </nav>
+    <span class="appbar__status mono" data-model-status title="AI modelinin vəziyyəti"><i class="dot dot--void"></i><span>Model</span></span>
+  </div>
+</header>
+
+<main class="appmain">
+
+  <!-- NEW ANALYSIS -->
+  <section class="view" data-view-panel="new">
+    <div class="workspace">
+      <aside class="panel">
+        <div class="panel__block">
+          <p class="label">1 · Şəkil növü</p>
+          <div class="segmented" role="radiogroup" aria-label="Analiz rejimi">
+            <label><input type="radio" name="mode" value="field" checked><span>
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2.5" y="2.5" width="15" height="15" rx="1.5"/><path d="M2.5 10h15M10 2.5v15"/></svg>
+              <b>Dron / sahə</b><small>Sağlamlıq xəritəsi</small></span></label>
+            <label><input type="radio" name="mode" value="leaf"><span>
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 16C4 8 9 4 16 4c0 7-4 12-12 12Z"/><path d="M4 16 11 9"/></svg>
+              <b>Telefon / yarpaq</b><small>Xəstəlik diaqnozu</small></span></label>
+          </div>
+          <p class="hint" data-mode-hint>Sahənin üstündən, yuxarıdan çəkilmiş dron şəkli və ya ortofoto yükləyin.</p>
+        </div>
+
+        <div class="panel__block">
+          <p class="label">2 · Şəkil</p>
+          <label class="drop" data-drop>
+            <input type="file" accept="image/*" data-file hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 15V4m0 0L8 8m4-4 4 4"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+            <b>Şəkli seçin və ya bura atın</b>
+            <small>JPG, PNG və ya WebP</small>
+          </label>
+          <div class="actions-row">
+            <label class="btn btn--ghost btn--sm camera-btn"><input type="file" accept="image/*" capture="environment" data-camera hidden>
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 6.5h3l1.5-2h5L14 6.5h3v9H3z"/><circle cx="10" cy="11" r="3"/></svg>Kamera</label>
+          </div>
+          <div class="samples">
+            <p class="label label--sub">və ya nümunə ilə yoxlayın</p>
+            <div class="samples__list" data-samples></div>
+          </div>
+        </div>
+
+        <div class="panel__block">
+          <p class="label">3 · Sahə adı <span class="muted">(istəyə bağlı)</span></p>
+          <input class="input" data-field-name placeholder="məs. Ağdam, 3-cü sahə" maxlength="60" list="field-names">
+          <datalist id="field-names"></datalist>
+        </div>
+      </aside>
+
+      <section class="stage" aria-live="polite">
+        <div class="empty" data-empty>
+          <div class="empty__art" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <h2>Sahənizin şəklini yükləyin</h2>
+          <p class="muted">Dron şəkli rəngli sağlamlıq xəritəsinə çevriləcək. Yarpaq şəklində isə bitki və xəstəlik tanınacaq. Analiz bu cihazda aparılır, şəkil heç yerə göndərilmir.</p>
+        </div>
+        <div class="result" data-result hidden></div>
+      </section>
+    </div>
+  </section>
+
+  <!-- FIELDS / HISTORY -->
+  <section class="view" data-view-panel="fields" hidden>
+    <div class="fields">
+      <div class="fields__head">
+        <div>
+          <h2>Sahələrim</h2>
+          <p class="muted">Bu cihazda saxlanmış analizlər. Hər sahənin dəyişməsini zamanla izləyin.</p>
+        </div>
+        <div class="fields__filters" data-filters></div>
+      </div>
+      <div class="fields__grid" data-history></div>
+      <div class="empty empty--small" data-history-empty hidden>
+        <h3>Hələ analiz yoxdur</h3>
+        <p class="muted">İlk analizi edin, nəticə avtomatik burada saxlanacaq.</p>
+        <button class="btn btn--primary btn--sm" data-goto="new">Yeni analiz</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<template id="tpl-loading">
+  <div class="loading">
+    <div class="loading__bar"><span></span></div>
+    <p class="mono" data-loading-text>Analiz edilir…</p>
+  </div>
+</template>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

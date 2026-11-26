@@ -1,0 +1,10 @@
+torch
+torchvision
+transformers
+huggingface_hub
+pandas
+pyarrow
+pillow
+numpy
+onnx
+onnxruntime

@@ -1,0 +1,68 @@
+{
+ "model": "VisionX leaf v1 (DINOv2-small + MLP head, int8 ONNX)",
+ "num_classes": 49,
+ "num_classes_disease": 48,
+ "num_crops": 15,
+ "crops": [
+  "apple",
+  "blueberry",
+  "cherry",
+  "corn",
+  "cotton",
+  "grape",
+  "orange",
+  "peach",
+  "pepper",
+  "potato",
+  "raspberry",
+  "soybean",
+  "squash",
+  "strawberry",
+  "tomato"
+ ],
+ "realworld": {
+  "dataset": "PlantDoc held-out test (n=637)",
+  "top1": 0.744,
+  "top3": 0.9136577708006279,
+  "healthy_vs_diseased": 0.964
+ },
+ "cotton": {
+  "n": 433,
+  "top1": 0.9861431870669746,
+  "top3": 1.0,
+  "crop": 1.0,
+  "healthy_vs_diseased": 0.9930715935334873
+ },
+ "grape": {
+  "n": 559,
+  "top1": 0.9874776386404294,
+  "top3": 0.998211091234347,
+  "crop": 1.0,
+  "healthy_vs_diseased": 0.998211091234347
+ },
+ "plantvillage": {
+  "n": 2245,
+  "top1": 0.9839643652561247,
+  "top3": 0.9991091314031181,
+  "crop": 1.0,
+  "healthy_vs_diseased": 0.9986636971046771
+ },
+ "not_a_leaf": {
+  "n": 311,
+  "top1": 1.0,
+  "top3": 1.0,
+  "crop": 1.0,
+  "healthy_vs_diseased": null
+ },
+ "onnx_int8_endtoend": {
+  "plantdoc_top1": 0.744,
+  "cotton_top1": 0.986,
+  "grape_top1": 0.989
+ },
+ "baselines_plantdoc_test": {
+  "linkanjarad/mobilenet_v2_1.0_224-plant-disease-identification": 0.27,
+  "rodynaemad/plant-disease-dinov2-small": 0.385,
+  "plantdoctor/swin-tiny-patch4-window7-224-plant-doctor": 0.256,
+  "neghani/plantvillage-resnet18 (PlantDoc-də öyrədilib, sızma ehtimalı)": 0.564
+ }
+}
