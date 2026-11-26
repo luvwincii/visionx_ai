@@ -24,7 +24,7 @@ export function loadFieldModel(onProgress) {
     ort.env.wasm.wasmPaths = new URL('../vendor/ort/', import.meta.url).href;
     ort.env.wasm.numThreads = self.crossOriginIsolated ? Math.min(4, navigator.hardwareConcurrency || 2) : 1;
     meta = await (await fetch(META_URL)).json();
-    const res = await fetch(MODEL_URL);
+    const res = await fetch(meta.model ? new URL('../models/' + meta.model, import.meta.url).href : MODEL_URL);
     if (!res.ok) throw new Error('Sahə modeli yüklənmədi: ' + res.status);
     const total = +res.headers.get('content-length') || 0;
     let buf;
@@ -55,7 +55,10 @@ function tileTensor(src, sx, sy, sw, sh, S) {
 // src: canvas or image. Returns an overlay canvas (W×H of src) and per-class area shares.
 export async function analyzeFieldAI(src, onStep) {
   const session = await loadFieldModel();
-  const W = src.width, H = src.height, S = meta.size, G = meta.grid, C = meta.classes.length, N = G * G;
+  const W = src.width, H = src.height, S = meta.size, C = meta.classes.length;
+  // two model formats: patch head (grid 32, probs [N, C]) and SegFormer (stride 4, probs [C, G, G])
+  const G = meta.grid || S / meta.out_stride, N = G * G;
+  const chw = !!meta.out_stride;
   // Square tiles as large as the short side (the model was trained on whole field tiles, not zoomed crops);
   // a 3:2 photo becomes 2 overlapping tiles, a square photo 1.
   const tile = Math.min(W, H);
@@ -74,15 +77,18 @@ export async function analyzeFieldAI(src, onStep) {
     onStep?.(k, tiles.length);
     const t = tiles[k];
     const out = await session.run({ pixel_values: new ort.Tensor('float32', tileTensor(src, t.x, t.y, t.w, t.h, S), [1, 3, S, S]) });
-    const probs = out.probs.data;
-    // area shares on the patch grid
+    const raw = out.probs.data;
+    // normalise to [N, C] layout
+    let probs = raw;
+    if (chw) { probs = new Float32Array(N * C); for (let c = 0; c < C; c++) for (let i = 0; i < N; i++) probs[i * C + c] = raw[c * N + i]; }
+    // area shares on the output grid
     for (let i = 0; i < N; i++) {
       let best = -1, bp = 0;
       for (let c = 0; c < C; c++) { const p = probs[i * C + c], th = meta.thr[c]; if (p >= th && p - th >= bp) { bp = p - th; best = c; } }
       tokTotal++; if (best >= 0) area[best]++;
     }
-    // smooth rendering: bilinearly upsample the probabilities (32 → R), then threshold per pixel
-    const R = 256, sc = G / R, id = octx.createImageData(R, R);
+    // smooth rendering: bilinearly upsample the probabilities (G → R), then threshold per pixel
+    const R = Math.max(256, Math.min(512, G * 4)), sc = G / R, id = octx.createImageData(R, R);
     const pv = new Float32Array(C);
     for (let y = 0; y < R; y++) {
       const fy = Math.min(G - 1, Math.max(0, (y + 0.5) * sc - 0.5)), y0 = Math.floor(fy), y1 = Math.min(G - 1, y0 + 1), wy = fy - y0;
