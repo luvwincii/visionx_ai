@@ -36,7 +36,7 @@ Gəlir modelimiz üç istiqamətdən ibarətdir. Birincisi, dron paketidir. Ferm
 
 ## 9. Bazar
 
-Dövlət Statistika Komitəsinin məlumatına görə, 2023-cü ildə Azərbaycanda əkin sahəsi bir yarım milyon hektar olub. Bunun 215 min hektarı Qarabağ və Şərqi Zəngəzur iqtisadi rayonlarının payına düşür. Ölkədə 1 203 kənd təsərrüfatı müəssisəsi fəaliyyət göstərir. Hektar başına 15 manatlıq abunə ilə hesablasaq, bütün Azərbaycan üzrə illik bazar 22,5 milyon manat, təkcə Qarabağda isə 3,2 milyon manatdır. Üç il ərzində hədəfimiz bazarın 5 faizini, yəni 75 min hektarı tutmaq və ildə 1,1 milyon manat gəlir əldə etməkdir. İşə Qarabağdan başlayırıq, çünki orada yeni sahələr və aqroparklar salınır, kənd təsərrüfatı yenidən qurulur. Dövlət də ağıllı texnologiyalar üçün subsidiya mexanizmi hazırlayır. Yeni texnologiyanı ilk gündən tətbiq etmək üçün ən uyğun yer oradır.
+Dövlət Statistika Komitəsinin məlumatına görə, 2023-cü ildə Azərbaycanda əkin sahəsi bir yarım milyon hektar olub. Bunun 215 min hektarı Qarabağ və Şərqi Zəngəzur iqtisadi rayonlarının payına düşür. Ölkədə 1 203 kənd təsərrüfatı müəssisəsi fəaliyyət göstərir. Hektar başına 15 manatlıq abunə ilə hesablasaq, bütün Azərbaycan üzrə illik bazar 22,5 milyon manat, təkcə Qarabağda isə 3,2 milyon manatdır. Biz real hədəf qoyuruq: üç il ərzində Qarabağdakı sahələrin təxminən 5 faizini, yəni 10 min hektarı əhatə etmək. Bu, yalnız abunədən ildə təxminən 150 min manat gəlir deməkdir, dron paketləri və xidmət bundan əlavədir. İşə Qarabağdan başlayırıq, çünki orada yeni sahələr və aqroparklar salınır, kənd təsərrüfatı yenidən qurulur. Dövlət də ağıllı texnologiyalar üçün subsidiya mexanizmi hazırlayır. Yeni texnologiyanı ilk gündən tətbiq etmək üçün ən uyğun yer oradır.
 
 ## 10. Rəqabət
 
@@ -48,7 +48,7 @@ Hazırda MVP tam hazırdır: sayt və platforma işləyir, yarpaq diaqnozu və d
 
 ## 12. Təklif
 
-Bizim təklifimiz bir pilot mövsümüdür. Qarabağda 1 000 hektar sahəni aprel-sentyabr ərzində hər iki həftədən bir izləmək istəyirik. Bunun üçün 40 000 manat lazımdır. Bu məbləğə üç dron dəsti, Azərbaycan sahələrindən min şəklin etiketlənməsi, sahə komandasının yol xərcləri və bir mövsümlük server xərcləri daxildir. Biz ucuz, adi dronlarla işləyirik: bir dəst təxminən 2 000 manatdır, multispektral dron isə 8 000 manatdan bahadır. Pilotda yeddi fermer və üç aqroparkla işləmək istəyirik. Sizdən maliyyədən əlavə üç şey istəyirik: Çindəki sərgidə iştirak, orada dron istehsalçıları və tərəfdaşlarla görüş; Qarabağ aqroparkları ilə tanışlıq; və ağıllı texnologiyalar üçün planlaşdırılan subsidiya mexanizminə qoşulmaq üçün nazirliklə əlaqə.
+Bizim təklifimiz kiçik və ölçülə bilən bir pilot mövsümüdür. Qarabağda 300 hektar sahəni aprel-sentyabr ərzində hər iki həftədən bir izləmək istəyirik. Bunun üçün 12 000 manat lazımdır: iki ucuz dron dəsti təxminən 4 000 manat, Azərbaycan sahələrindən şəkillərin toplanması və aqronomla etiketlənməsi 3 000 manat, sahə səfərləri 3 000 manat, server və digər xərclər 2 000 manat. Bir ucuz dron gündə 60–100 hektar çəkə bildiyi üçün 300 hektarı bir-iki günə tam əhatə edirik. Pilotda dörd fermer və bir aqroparkla işləmək istəyirik. Məqsədimiz bir mövsümdə real nəticə göstərmək: dərmana qənaət, problemin erkən tapılması və yerli şəkillərlə daha dəqiq model. Maliyyədən əlavə üç şey istəyirik: Çindəki sərgidə iştirak, orada dron istehsalçıları və tərəfdaşlarla görüş; Qarabağ aqroparkları ilə tanışlıq; və ağıllı texnologiyalar üçün planlaşdırılan subsidiya mexanizminə qoşulmaq üçün nazirliklə əlaqə.
 
 ## 13. Komanda
 
