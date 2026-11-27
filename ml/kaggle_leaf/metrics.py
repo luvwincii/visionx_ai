@@ -5,10 +5,13 @@ yi = np.array([classes.index(c) for c in y]); healthy = np.array([c.endswith('he
 out = {}
 for arg in sys.argv[1:]:
     name, f = arg.split('='); z = np.load(f); r = {}
+    ix = z['idx'] if 'idx' in z else np.arange(len(y)); Sz = S[ix]; yz = yi[ix]
     for tta in [False, True]:
         P = (z['p'] + z['pf']) / 2 if tta else z['p']
         for s in ['plantdoc', 'cotton', 'grape', 'other', 'pv_test']:
-            m = S == s; p = P[m]; t = yi[m]; pr = p.argmax(1)
+            m = Sz == s
+            if not m.any(): continue
+            p = P[m]; t = yz[m]; pr = p.argmax(1)
             top3 = np.mean([a in np.argsort(-q)[:3] for q, a in zip(p, t)])
             nm = t != classes.index('other')
             hd = float(np.mean(healthy[pr[nm]] == healthy[t[nm]])) if nm.any() else None
