@@ -5,9 +5,9 @@
 # Model: SegFormer (ImageNet-pretrained MiT encoder), fine-tuned end to end, multi-label sigmoid head.
 import os, io, sys, json, time, math, random, glob, shutil, subprocess
 
-MODE = 'smoke'           # 'smoke' = short pipeline check, 'full' = real run
+MODE = 'full'            # 'smoke' = short pipeline check, 'full' = real run
 BACKBONE = 'nvidia/mit-b3'
-TRAIN_HOURS = 0.06 if MODE == 'smoke' else 2.0   # resume run: kernel total must stay under ~2.5 h
+TRAIN_HOURS = 0.03 if MODE == 'smoke' else 1.75   # resume run: kernel total must stay under ~2.5 h
 CLASSES = ['drydown', 'nutrient_deficiency', 'weed_cluster', 'water', 'planter_skip', 'storm_damage']
 HF_REPO = 'Vadim21221/agri-vision-2021-segmentation'
 N_TRAIN_SHARDS = 2 if MODE == 'smoke' else 26
@@ -178,50 +178,64 @@ while not done:
 torch.save(net.state_dict(), f'{WORK}/ckpt.pt')
 log('training done, steps', step, 'epochs', ep)
 
-# ---------- evaluation (streaming: only TP/FP/FN counters are kept) ----------
+# ---------- evaluation (streaming counters only; same tile sets as the local ml/seg_eval_tta.py) ----------
+# tune: val-00000 every 3rd tile, first half (thresholds chosen here only); c240: its second half, first 240;
+# t800: val-00002 every 2nd tile, first 800. Plain and flip-TTA (mean of identity, h-flip, v-flip). fp32, GPU.
 net.eval()
-TH = torch.tensor(np.round(np.arange(0.1, 0.951, 0.05), 2), device=dev)
+EC = CLASSES[:5]
+TT = torch.tensor(np.round(np.arange(0.2, 0.951, 0.05), 2), device=dev, dtype=torch.float32); nT = len(TT)
+v0f = shard('val-00000-of-00008')
+def take(f, keep):
+    out, n = [], 0
+    for bt in pq.ParquetFile(f).iter_batches(batch_size=32, columns=COLS):
+        for r in bt.to_pylist():
+            if keep(n): out.append(r)
+            n += 1
+    return out
+v0 = take(v0f, lambda n: n % 3 == 0)
+SETS = {'tune': v0[:len(v0) // 2], 'c240': v0[len(v0) // 2:][:240], 't800': take(test_files[0], lambda n: n % 2 == 0)[:800]}
+if MODE == 'smoke': SETS = {k: v[:40] for k, v in SETS.items()}
+del v0
 @torch.no_grad()
-def batches(rows):
-    batch, ys = [], []
-    for r in rows:
-        img, m = decode(r)
-        batch.append(norm(torch.from_numpy(img).permute(2, 0, 1))); ys.append(torch.from_numpy(m))
-        if len(batch) == 16:
-            yield torch.stack(batch), torch.stack(ys); batch, ys = [], []
-    if batch: yield torch.stack(batch), torch.stack(ys)
+def p_of(x):
+    return torch.sigmoid(net(x))
 @torch.no_grad()
-def probs(x):
-    with torch.autocast('cuda', dtype=torch.float16):
-        lg = net(x.to(dev)).float()
-    return torch.sigmoid(F.interpolate(lg, size=(S, S), mode='bilinear', align_corners=False))
-@torch.no_grad()
-def sweep(rows):   # counts per class per threshold
-    tp = torch.zeros(len(CLASSES), len(TH), device=dev, dtype=torch.float64); fp = tp.clone(); fn = tp.clone(); n = 0
-    for x, y in batches(rows):
-        P = probs(x); Y = y.to(dev); n += len(x)
-        for j in range(len(CLASSES)):
-            yj = Y[:, j].bool()
-            for k, t in enumerate(TH):
-                pj = P[:, j] > t
-                tp[j, k] += (pj & yj).sum(); fp[j, k] += (pj & ~yj).sum(); fn[j, k] += (~pj & yj).sum()
-    return tp.cpu().numpy(), fp.cpu().numpy(), fn.cpu().numpy(), n
-
-nt = 100 if MODE == 'smoke' else 1200
-tp, fp, fn, _ = sweep(eval_rows(tune_files, every=1, limit=nt))
-iou = tp / np.maximum(1, tp + fp + fn)
-thr = [round(float(TH[int(iou[j].argmax())]), 2) for j in range(len(CLASSES))]
-log('thresholds', dict(zip(CLASSES, thr)))
-nte = 100 if MODE == 'smoke' else 800
-tp, fp, fn, ntiles = sweep(eval_rows(test_files, every=1, limit=nte))
-pix = {}
-for j, c in enumerate(CLASSES):
-    k = int(np.argmin(np.abs(TH.cpu().numpy() - thr[j])))
-    a, b, d = tp[j, k], fp[j, k], fn[j, k]
-    pix[c] = {'IoU': round(a / max(1, a + b + d), 4), 'precision': round(a / max(1, a + b), 4), 'recall': round(a / max(1, a + d), 4), 'thr': thr[j]}
-pix['mean_IoU_5'] = round(float(np.mean([pix[c]['IoU'] for c in CLASSES[:5]])), 4)
+def eval_set(rows):
+    A = torch.zeros(2, 2, 3, len(EC), nT, device=dev, dtype=torch.float64)
+    for i in range(0, len(rows), 8):
+        dec_ = [decode(r) for r in rows[i:i + 8]]
+        x = torch.stack([norm(torch.from_numpy(im).permute(2, 0, 1)) for im, _ in dec_]).to(dev)
+        M = torch.stack([torch.from_numpy(m[:5]) for _, m in dec_]).to(dev)            # (B,5,512,512) bool
+        p0 = p_of(x); ph = p_of(x.flip(-1)).flip(-1); pv = p_of(x.flip(-2)).flip(-2)
+        zy = F.avg_pool2d(M.float(), 128) >= 0.1                                          # (B,5,4,4)
+        for v, p in enumerate([p0, (p0 + ph + pv) / 3]):
+            up = F.interpolate(p[:, :5], size=(S, S), mode='bilinear', align_corners=False)
+            for k in range(nT):
+                q = up > TT[k]
+                tp = (q & M).sum((0, 2, 3)); pp = q.sum((0, 2, 3)); ps = M.sum((0, 2, 3))
+                A[v, 0, 0, :, k] += tp; A[v, 0, 1, :, k] += pp - tp; A[v, 0, 2, :, k] += ps - tp
+                zq = F.avg_pool2d(q.float(), 128) >= 0.1
+                A[v, 1, 0, :, k] += (zq & zy).sum((0, 2, 3)); A[v, 1, 1, :, k] += (zq & ~zy).sum((0, 2, 3)); A[v, 1, 2, :, k] += (~zq & zy).sum((0, 2, 3))
+    return A.cpu().numpy()
+R = {}
+for name, rows in SETS.items():
+    R[name] = eval_set(rows); log('eval', name, len(rows))
+np.savez(f'{WORK}/eval_torch_fp32.npz', T=TT.cpu().numpy(), C=np.array(EC), **R)
+def summ(A, thr_idx):
+    o = {}
+    for j, c in enumerate(EC):
+        tp, fp, fn = A[:, j, thr_idx[j]]
+        o[c] = {'IoU': round(tp / max(1, tp + fp + fn), 4), 'precision': round(tp / max(1, tp + fp), 4), 'recall': round(tp / max(1, tp + fn), 4)}
+    o['mean_IoU_5'] = round(float(np.mean([o[c]['IoU'] for c in EC])), 4)
+    return o
 res = {'backbone': BACKBONE, 'mode': MODE, 'resumed_from': 'visionx-seg-ckpt1 (3 epochs, 9896 steps)', 'steps': step, 'epochs': ep,
-       'train_hours': round((time.time() - train_start) / 3600, 2), 'test_tiles': ntiles, 'pixel_level': pix}
+       'train_hours': round((time.time() - train_start) / 3600, 2)}
+thr = None
+for v, vn in enumerate(['plain', 'tta']):
+    tu = R['tune'][v, 0]; idx = (tu[0] / np.maximum(1, tu.sum(0))).argmax(1)
+    th = [round(float(TT[i]), 2) for i in idx]
+    if v == 0: thr = th + [1.01]
+    res[vn] = {'thr': th, 'c240': summ(R['c240'][v, 0], idx), 't800': summ(R['t800'][v, 0], idx), 't800_zone': summ(R['t800'][v, 1], idx)}
 json.dump(res, open(f'{WORK}/metrics.json', 'w'), indent=1)
 json.dump({'classes': CLASSES, 'thr': thr, 'size': S, 'out_stride': 4, 'backbone': BACKBONE}, open(f'{WORK}/field_labels.json', 'w'), indent=1)
 log(json.dumps(res, indent=1))

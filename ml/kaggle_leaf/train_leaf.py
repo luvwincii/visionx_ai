@@ -6,7 +6,7 @@
 import os, io, sys, json, time, math, random, glob, subprocess, copy
 
 MODE = 'full'          # 'smoke' | 'full'
-TRAIN_MIN = 4 if MODE == 'smoke' else 100
+TRAIN_MIN = 4 if MODE == 'smoke' else 85
 ARCHS = {'small': ('facebook/dinov2-small', 0, 4e-5, 0.8, 3), 'base': ('facebook/dinov2-base', 1, 3e-5, 0.8, 2)}
 WORK = '/kaggle/working'
 T0 = time.time()

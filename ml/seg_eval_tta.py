@@ -10,6 +10,7 @@ C = ['drydown', 'nutrient_deficiency', 'weed_cluster', 'water', 'planter_skip']
 MEAN = np.array([0.485, 0.456, 0.406], np.float32); STD = np.array([0.229, 0.224, 0.225], np.float32)
 T = np.round(np.arange(0.2, 0.951, 0.05), 2); nT = len(T)
 model, out = sys.argv[1], sys.argv[2]
+import os; NOTTA = os.environ.get('NOTTA') == '1'   # plain only (the 'tta' slot stays zero)
 s = ort.InferenceSession(model, providers=['CPUExecutionProvider'])
 def load(f, keep):
     rows, n = [], 0
@@ -32,9 +33,12 @@ for name, rows in sets.items():
         x = ((np.asarray(im, np.float32) / 255 - MEAN) / STD).transpose(2, 0, 1)[None]
         M = [np.asarray(Image.open(io.BytesIO(r['mask_' + c]['bytes'])), np.uint8) > 0 for c in C]
         p0 = run(x)
-        ph = run(np.ascontiguousarray(x[..., ::-1]))[..., ::-1]
-        pv = run(np.ascontiguousarray(x[..., ::-1, :]))[..., ::-1, :]
-        for v, p in enumerate([p0, (p0 + ph + pv) / 3]):
+        if NOTTA: variants = [p0]
+        else:
+            ph = run(np.ascontiguousarray(x[..., ::-1]))[..., ::-1]
+            pv = run(np.ascontiguousarray(x[..., ::-1, :]))[..., ::-1, :]
+            variants = [p0, (p0 + ph + pv) / 3]
+        for v, p in enumerate(variants):
             for j, c in enumerate(C):
                 m = M[j]
                 up = np.asarray(Image.fromarray(p[j].astype(np.float32)).resize((512, 512), Image.BILINEAR))
