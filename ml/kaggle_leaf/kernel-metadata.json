@@ -1,0 +1,14 @@
+{
+  "id": "elxanaakiiyev/visionx-leaf-ft",
+  "title": "visionx-leaf-ft",
+  "code_file": "train_leaf.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": true,
+  "machine_shape": "NvidiaTeslaT4",
+  "dataset_sources": ["elxanaakiiyev/visionx-leaf-data"],
+  "competition_sources": [],
+  "kernel_sources": []
+}

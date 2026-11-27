@@ -1,0 +1,14 @@
+{
+  "id": "elxanaakiiyev/visionx-field-seg2",
+  "title": "visionx-field-seg2",
+  "code_file": "train_seg2.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": true,
+  "machine_shape": "NvidiaTeslaT4",
+  "dataset_sources": ["elxanaakiiyev/visionx-seg-ckpt1"],
+  "competition_sources": [],
+  "kernel_sources": []
+}
