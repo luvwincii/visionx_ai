@@ -1,7 +1,7 @@
 // VisionX field AI (research demo): SegFormer (MiT-B3 encoder + all-MLP decoder) fine-tuned end to end on
 // Agriculture-Vision (RGB only, 57k tiles, 5 h on 2×T4). For a 512×512 tile it gives a 128×128 probability map per class.
-// Held-out test pixel IoU (int8, tuned thresholds): drydown 0.82, water 0.80, weed 0.54, nutrient deficiency 0.29,
-// planter skip 0.21. Storm damage is disabled (too few training samples).
+// Held-out test pixel IoU (int8; 240 / 800 tiles): drydown 0.82 / 0.61, water 0.80 / 0.88, weed 0.57 / 0.32,
+// nutrient deficiency 0.35 / 0.40, planter skip 0.21 / 0.41; mean 0.55 / 0.53. Storm damage is disabled (too few training samples).
 const MODEL_URL = new URL('../models/visionx-field-seg-int8.onnx', import.meta.url).href;
 const META_URL = new URL('../models/field_labels.json', import.meta.url).href;
 const ORT_URL = new URL('../vendor/ort/ort.wasm.min.mjs', import.meta.url).href;

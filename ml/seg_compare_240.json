@@ -1,0 +1,35 @@
+{
+ "new8": {
+  "drydown": {
+   "pixel_IoU": 0.821,
+   "precision": 0.903,
+   "recall": 0.901,
+   "patch32_IoU": 0.825
+  },
+  "nutrient_deficiency": {
+   "pixel_IoU": 0.349,
+   "precision": 0.477,
+   "recall": 0.565,
+   "patch32_IoU": 0.348
+  },
+  "weed_cluster": {
+   "pixel_IoU": 0.565,
+   "precision": 0.679,
+   "recall": 0.77,
+   "patch32_IoU": 0.57
+  },
+  "water": {
+   "pixel_IoU": 0.804,
+   "precision": 0.862,
+   "recall": 0.922,
+   "patch32_IoU": 0.807
+  },
+  "planter_skip": {
+   "pixel_IoU": 0.205,
+   "precision": 0.807,
+   "recall": 0.216,
+   "patch32_IoU": 0.161
+  },
+  "mean_pixel_IoU_5": 0.549
+ }
+}

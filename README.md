@@ -55,23 +55,25 @@ Qeydlər:
 
 ## Dron AI səbəbləri (seqmentasiya, beta)
 
-Sahə nəticəsində **"AI ilə səbəbləri tap"** düyməsi var. Dondurulmuş DINOv2-small modeli şəkli 32×32 hissəyə bölür, öyrədilmiş başlıq isə hər hissə üçün sinif ehtimalını verir. Ehtimallar bilinear üsulla böyüdülür, sonra eşik tətbiq olunur. Model int8 ONNX formatındadır (24 MB), brauzerdə işləyir və bir şəkli ~2–3 saniyəyə analiz edir.
+Sahə nəticəsində **"AI ilə səbəbləri tap"** düyməsi var. Model SegFormer-dir: ImageNet-də öyrədilmiş MiT-B3 kodlayıcı və yüngül dekoder. Bütöv şəkildə, Kaggle-da 2×T4 GPU üzərində 5 saat (3 epoxa, ~57 min plitə) öyrədilib. 512×512 plitə üçün hər sinfin 128×128 ehtimal xəritəsini verir. Model int8 ONNX formatındadır (49 MB), brauzerdə işləyir, bir şəkli ~4–10 saniyəyə analiz edir. int8 və tam (fp32) versiyanın dəqiqliyi eynidir.
 
-- **Data:** Agriculture-Vision (Chiu et al., CVPR 2020), ~8 760 RGB plitə. Lisenziya yalnız qeyri-kommersiya tədqiqata icazə verir. Burada yalnız tələbə müsabiqəsi və sərgi demosu üçün istifadə olunub. Xam data repoda yoxdur.
-- **Test, modelin görmədiyi plitələrdə (IoU):**
+- **Data:** Agriculture-Vision 2021 (Chiu et al., CVPR 2020), yalnız RGB. Lisenziya yalnız qeyri-kommersiya tədqiqata icazə verir. Burada yalnız tələbə müsabiqəsi və sərgi demosu üçün istifadə olunub. Xam data repoda yoxdur. SegFormer çəkilərinin lisenziyası da qeyri-kommersiyadır.
+- **Eşiklər:** iki ayrı dəstdə (val-00001 və val-00000-ın birinci yarısı) seçilib, ortalaması götürülüb. Test plitələri eşik seçimində istifadə olunmayıb.
+- **Test, modelin görmədiyi plitələrdə (piksel IoU):**
 
-| Sinif | IoU | Qeyd |
-|---|---|---|
-| Su yığılması | 0.58 | ən etibarlı sinif |
-| Quruma | 0.38 | |
-| Qida çatışmazlığı | 0.31 | |
-| Alaq | 0.19 | |
-| Əkin boşluğu | 0.14 | zəif |
-| Fırtına zədəsi | – | söndürülüb: öyrətmə nümunəsi çox azdır |
+| Sinif | Köhnə model (DINOv2 başlığı) | Yeni model, test A (240 plitə) | Yeni model, test B (800 plitə) |
+|---|---|---|---|
+| Quruma | 0.44 | 0.82 | 0.61 |
+| Su yığılması | 0.55–0.60 | 0.80 | 0.88 |
+| Alaq | 0.19–0.26 | 0.57 | 0.32 |
+| Qida çatışmazlığı | 0.26–0.31 | 0.35 | 0.40 |
+| Əkin boşluğu | 0.15–0.21 | 0.21 | 0.41 |
+| **Orta (5 sinif)** | **0.34** | **0.55** | **0.53** |
+| Fırtına zədəsi | – | söndürülüb | söndürülüb (nümunə azdır) |
 
-Dəqiqlik (precision) təxminən 40–50%-dir, yəni rənglənən sahənin yarısı həqiqi problemdir. Datanın şəkilləri təyyarədən çəkilib (10–20 sm/piksel), dron şəkillərində miqyas fərqli ola bilər.
+Müqayisə üçün: Agriculture-Vision yarışlarında ən yaxşı nəticələr RGB+infraqırmızı ilə və bütün siniflər üzrə mIoU ~0.55–0.58-dir. Datanın şəkilləri ABŞ-da təyyarədən çəkilib (10–20 sm/piksel). Azərbaycan dron şəkillərində dəqiqliyi yoxlamaq üçün yerli etiketli şəkillər lazımdır.
 
-Etiketsiz anomaliya üsulu (şəklin öz ortalamasından fərqlənən hissələr) da sınaqdan keçirildi, amma AUROC 0.48 göstərdi, yəni təsadüfi təxmin səviyyəsində. Ona görə məhsula daxil edilmədi. Skriptlər: `ml/agv_*.py`, nəticələr: `ml/agv_results.json`.
+Skriptlər: `ml/kaggle/train_seg.py` (öyrətmə), `ml/kaggle/export_local.py` (ONNX), `ml/seg_eval_big.py`, `ml/seg_thr_sweep.py` (test və eşiklər). Nəticələr: `ml/seg_compare_*.json`, `ml/seg_thr_sweep.json`. Köhnə model skriptləri: `ml/agv_*.py`.
 
 ## VisionX köməkçisi (Gemini)
 
