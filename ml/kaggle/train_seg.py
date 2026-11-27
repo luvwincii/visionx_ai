@@ -213,7 +213,7 @@ for j in range(len(CLASSES)):
     thr.append(best[1])
 del P, Y
 log('thresholds', dict(zip(CLASSES, thr)))
-nte = 150 if MODE == 'smoke' else 2500
+nte = 150 if MODE == 'smoke' else 800   # 2500 full-res maps did not fit in Kaggle RAM (run was killed here)
 P, Y = predict(eval_rows(test_files, every=1, limit=nte))
 res = {'backbone': BACKBONE, 'mode': MODE, 'steps': step, 'epochs': ep, 'train_hours': round((time.time() - train_start) / 3600, 2),
        'test_tiles': int(len(P)), 'pixel_level': stats(P, Y, thr)}

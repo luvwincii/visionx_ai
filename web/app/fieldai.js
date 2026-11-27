@@ -1,8 +1,8 @@
-// VisionX field AI (research demo): DINOv2-small + segmentation head trained on Agriculture-Vision (RGB only).
-// Per 14×14-pixel patch of a 448×448 tile the model gives a probability for each field anomaly class.
-// Held-out test IoU (int8, demo thresholds): water 0.58, drydown 0.38, nutrient deficiency 0.31,
-// weed 0.19, planter skip 0.14; precision about 40-50%. Storm damage is disabled (too few training samples).
-const MODEL_URL = new URL('../models/visionx-field.onnx', import.meta.url).href;
+// VisionX field AI (research demo): SegFormer (MiT-B3 encoder + all-MLP decoder) fine-tuned end to end on
+// Agriculture-Vision (RGB only, 57k tiles, 5 h on 2×T4). For a 512×512 tile it gives a 128×128 probability map per class.
+// Held-out test pixel IoU (int8, tuned thresholds): drydown 0.82, water 0.80, weed 0.54, nutrient deficiency 0.29,
+// planter skip 0.21. Storm damage is disabled (too few training samples).
+const MODEL_URL = new URL('../models/visionx-field-seg-int8.onnx', import.meta.url).href;
 const META_URL = new URL('../models/field_labels.json', import.meta.url).href;
 const ORT_URL = new URL('../vendor/ort/ort.wasm.min.mjs', import.meta.url).href;
 const MEAN = [0.485, 0.456, 0.406], STD = [0.229, 0.224, 0.225];

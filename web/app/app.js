@@ -214,7 +214,7 @@ async function renderField(rec) {
         <div class="report__sec" data-ai-sec>
           <p class="label">AI: ehtimal olunan səbəblər <span class="tag">beta</span></p>
           <div data-ai-body>
-            <p class="muted" style="font-size:14px;margin-bottom:12px">Seqmentasiya modeli sahədə quruma, qida çatışmazlığı, alaq, su yığılması və əkin boşluğunu axtarır. İlk dəfə ~25 MB model yüklənir.</p>
+            <p class="muted" style="font-size:14px;margin-bottom:12px">Seqmentasiya modeli sahədə quruma, qida çatışmazlığı, alaq, su yığılması və əkin boşluğunu axtarır. İlk dəfə ~49 MB model yüklənir, sonra cihazda saxlanır.</p>
             <button class="btn btn--primary btn--sm" data-ai-run>AI ilə səbəbləri tap</button>
           </div>
         </div>
